@@ -49,6 +49,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   * { animation: none !important; transition: none !important; }
 }
 
+/* [hidden] muss Vorrang vor den eigenen display:flex-Regeln haben, sonst bleibt
+   z.B. die Login-Seite trotz hidden=true sichtbar. */
+.login-screen[hidden], .app-shell[hidden] { display: none !important; }
+
 /* ---------- Login ---------- */
 .login-screen {
   min-height: 100vh;
