@@ -1,9 +1,8 @@
 import { supabase } from './supabaseClient.js';
 
-// Ergebnis-Status fuer den Login-Versuch:
-// 'admin'    -> employee-Objekt zurueckgegeben, Zugriff erlaubt
-// 'blocked'  -> Account existiert, ist aber gesperrt (contactName enthaelt die Admin-Kontaktperson)
-// 'no-admin' -> eingeloggt, aber keine Admin-Rolle
+// Status-Werte:
+// 'ok'       -> employee + roles (Set) zurueckgegeben, Zugriff erlaubt (unabhaengig von Rolle)
+// 'blocked'  -> Account existiert, ist aber gesperrt (contactName = Admin-Kontaktperson)
 // 'none'     -> kein Auth-User / keine verknuepfte employees-Zeile
 export async function checkAccess() {
   const { data: { user } } = await supabase.auth.getUser();
@@ -23,17 +22,15 @@ export async function checkAccess() {
     return { status: 'blocked', contactName };
   }
 
-  const { data: roles, error: rolesErr } = await supabase
+  const { data: roleRows, error: rolesErr } = await supabase
     .from('user_roles')
     .select('role')
     .eq('user_id', employee.id);
 
   if (rolesErr) return { status: 'none' };
 
-  const isAdmin = (roles || []).some(r => r.role === 'admin');
-  if (!isAdmin) return { status: 'no-admin' };
-
-  return { status: 'admin', employee };
+  const roles = new Set((roleRows || []).map(r => r.role));
+  return { status: 'ok', employee, roles };
 }
 
 export async function signIn(email, password) {

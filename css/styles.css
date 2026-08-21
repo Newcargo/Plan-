@@ -181,6 +181,7 @@ tr:last-child td { border-bottom: none; }
 .badge-success { background: var(--success-soft); color: var(--success); }
 .badge-warn { background: var(--warn-soft); color: var(--warn); }
 .badge-danger { background: var(--danger-soft); color: var(--danger); }
+.badge-info { background: var(--accent-soft); color: var(--accent); }
 .badge-muted { background: var(--bg); color: var(--text-muted); }
 
 .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }

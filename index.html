@@ -33,15 +33,16 @@
   <nav class="sidebar">
     <div class="brand" data-i18n="app.title">Urlaub & Kapazität – Admin</div>
 
-    <button class="nav-item" data-route="dashboard"><span data-i18n="nav.dashboard">Übersicht</span></button>
-    <button class="nav-item" data-route="teams"><span data-i18n="nav.teams">Teams</span></button>
-    <button class="nav-item" data-route="employees"><span data-i18n="nav.employees">Mitarbeiter</span></button>
-    <button class="nav-item" data-route="holidays"><span data-i18n="nav.holidays">Feiertage</span></button>
-    <button class="nav-item" data-route="blocked"><span data-i18n="nav.blocked">Sperrzeiten</span></button>
-    <button class="nav-item" data-route="sprints"><span data-i18n="nav.sprints">PI & Sprints</span></button>
-    <button class="nav-item" data-route="bands"><span data-i18n="nav.bands">Konfidenzband</span></button>
-    <button class="nav-item" data-route="settings"><span data-i18n="nav.settings">Einstellungen</span></button>
-    <button class="nav-item" data-route="roles"><span data-i18n="nav.roles">Rollen & Zugriff</span></button>
+    <button class="nav-item" data-route="my-leave"><span data-i18n="nav.myLeave">Mein Urlaub</span></button>
+    <button class="nav-item" data-route="dashboard" data-requires="admin"><span data-i18n="nav.dashboard">Übersicht</span></button>
+    <button class="nav-item" data-route="teams" data-requires="admin"><span data-i18n="nav.teams">Teams</span></button>
+    <button class="nav-item" data-route="employees" data-requires="admin"><span data-i18n="nav.employees">Mitarbeiter</span></button>
+    <button class="nav-item" data-route="holidays" data-requires="admin"><span data-i18n="nav.holidays">Feiertage</span></button>
+    <button class="nav-item" data-route="blocked" data-requires="admin"><span data-i18n="nav.blocked">Sperrzeiten</span></button>
+    <button class="nav-item" data-route="sprints" data-requires="admin"><span data-i18n="nav.sprints">PI & Sprints</span></button>
+    <button class="nav-item" data-route="bands" data-requires="admin"><span data-i18n="nav.bands">Konfidenzband</span></button>
+    <button class="nav-item" data-route="settings" data-requires="admin"><span data-i18n="nav.settings">Einstellungen</span></button>
+    <button class="nav-item" data-route="roles" data-requires="admin"><span data-i18n="nav.roles">Rollen & Zugriff</span></button>
     <button class="nav-item" data-route="changelog"><span data-i18n="nav.changelog">Change-Log</span></button>
 
     <div class="sidebar-footer">

@@ -12,6 +12,7 @@ import { renderBands } from './sections/confidenceBands.js';
 import { renderSettings } from './sections/settings.js';
 import { renderRoles } from './sections/roles.js';
 import { renderChangelog } from './sections/changelog.js';
+import { renderMyLeave } from './sections/myLeave.js';
 import { APP_VERSION } from './version.js';
 
 const routes = {
@@ -25,11 +26,15 @@ const routes = {
   settings: renderSettings,
   roles: renderRoles,
   changelog: renderChangelog,
+  'my-leave': renderMyLeave,
 };
 
 const loginScreen = document.getElementById('login-screen');
 const appShell = document.getElementById('app-shell');
 const mainContent = document.getElementById('main-content');
+
+let currentRoles = new Set();
+let currentEmployee = null;
 
 function setActiveNav(route) {
   document.querySelectorAll('.nav-item[data-route]').forEach(btn => {
@@ -39,8 +44,16 @@ function setActiveNav(route) {
 
 async function navigate(route) {
   setActiveNav(route);
-  const renderFn = routes[route] || routes.dashboard;
-  await renderFn(mainContent);
+  const renderFn = routes[route] || routes['my-leave'];
+  await renderFn(mainContent, { employee: currentEmployee, roles: currentRoles });
+}
+
+function applyRoleVisibility() {
+  document.querySelectorAll('.nav-item[data-route]').forEach(btn => {
+    const requires = btn.dataset.requires;
+    if (!requires) { btn.hidden = false; return; }
+    btn.hidden = !currentRoles.has(requires);
+  });
 }
 
 function setupNav() {
@@ -57,9 +70,13 @@ function setupNav() {
       setLang(btn.dataset.lang);
       document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === btn.dataset.lang));
       const active = document.querySelector('.nav-item.active');
-      navigate(active ? active.dataset.route : 'dashboard');
+      navigate(active ? active.dataset.route : defaultRoute());
     });
   });
+}
+
+function defaultRoute() {
+  return currentRoles.has('admin') ? 'dashboard' : 'my-leave';
 }
 
 function showLogin(message) {
@@ -73,9 +90,10 @@ async function showApp() {
   loginScreen.hidden = true;
   appShell.hidden = false;
   setupNav();
+  applyRoleVisibility();
   applyTranslations();
   document.getElementById('sidebar-version').textContent = 'v' + APP_VERSION;
-  await navigate('dashboard');
+  await navigate(defaultRoute());
 }
 
 document.getElementById('login-form').addEventListener('submit', async e => {
@@ -92,7 +110,9 @@ document.getElementById('login-form').addEventListener('submit', async e => {
 async function handleAccessResult() {
   const result = await checkAccess();
 
-  if (result.status === 'admin') {
+  if (result.status === 'ok') {
+    currentEmployee = result.employee;
+    currentRoles = result.roles;
     await showApp();
     return;
   }
@@ -102,14 +122,12 @@ async function handleAccessResult() {
 
   if (result.status === 'blocked') {
     showLogin(t('login.blocked').replace('{name}', result.contactName));
-  } else if (result.status === 'no-admin') {
-    showLogin(t('login.noaccess'));
   } else {
     showLogin();
   }
 }
 
-// Beim Laden pruefen, ob bereits eine gueltige Admin-Session besteht
+// Beim Laden pruefen, ob bereits eine gueltige Session besteht
 (async function init() {
   applyTranslations();
   await handleAccessResult();

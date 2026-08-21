@@ -6,9 +6,29 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.8.1';
+export const APP_VERSION = '1.9.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.9.0',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Neuer Bereich "Mein Urlaub" für alle Kollegen mit App-Zugang (nicht mehr nur Admin)',
+        'Login öffnet sich jetzt für jeden nicht gesperrten Mitarbeiter; Navigation passt sich automatisch an die Rolle an',
+        'Urlaubsantrag stellen (Start-/Enddatum), mit Warnhinweis bei Überschneidung mit Sperrzeiten und Info bei enthaltenen Feiertagen',
+        'Eigene Anträge mit Status-Badge und Kommentar einsehen; Anträge im Status "Beantragt" selbst zurückziehen',
+        'Phase 1 von 2 des Urlaubskalenders – Genehmigungs-Workflow (Stufe 2) folgt als nächstes',
+      ],
+      en: [
+        'New "My Leave" area for every colleague with app access (no longer admin-only)',
+        'Login now opens for any non-blocked employee; navigation adapts automatically to the role',
+        'Submit a leave request (start/end date), with a warning when overlapping blocked periods and info on included holidays',
+        'View own requests with status badge and comment; withdraw requests still in "Requested" status',
+        'Phase 1 of 2 for the leave calendar – the approval workflow (level 2) is next',
+      ],
+    },
+  },
   {
     version: '1.8.1',
     date: '2026-08-21',
