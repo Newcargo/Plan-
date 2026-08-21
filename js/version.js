@@ -6,9 +6,23 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.7.0';
+export const APP_VERSION = '1.7.1';
 
 export const CHANGELOG = [
+  {
+    version: '1.7.1',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Fehlerbehebung: Sprints blieben dauerhaft bei "Lädt..." hängen (PI-Umbenennen/-Löschen-Buttons wurden mit falschem Selektor gesucht, Skript brach vorzeitig ab)',
+        'Seitentitel "PI & Sprints" (vorher englisch "Program Increments & Sprints") konsistent mit der Navigation',
+      ],
+      en: [
+        'Bug fix: sprints stayed stuck on "Loading..." forever (PI rename/delete buttons were queried with the wrong selector, causing the script to abort early)',
+        'Page title "PI & Sprints" (previously English) now consistent with the navigation label',
+      ],
+    },
+  },
   {
     version: '1.7.0',
     date: '2026-08-21',

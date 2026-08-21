@@ -64,7 +64,7 @@ const dict = {
     'blocked.label': 'Bezeichnung',
     'blocked.capacityImpact': 'Wirkt auf Kapazität (Firmenschliessung)',
     'blocked.capacityImpactHint': 'Aus = reine Projekt-Sperre (nur Genehmigungshinweis, keine Kapazitätsreduktion)',
-    'sprints.title': 'Program Increments & Sprints',
+    'sprints.title': 'PI & Sprints',
     'sprints.piName': 'PI-Bezeichnung',
     'sprints.addPi': 'Neue PI anlegen',
     'sprints.sprintNr': 'Sprint',
