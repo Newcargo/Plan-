@@ -6,9 +6,25 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.7.1';
+export const APP_VERSION = '1.8.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.0',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Angezeigte Daten in allen Listen zeigen jetzt Wochentag + Datum, z. B. "Fr 21.08.2026" (Feiertage, Sperrzeiten, PI & Sprints)',
+        'Wochentag-Kürzel passt sich der gewählten Sprache an (DE/EN)',
+        'Betrifft nur die Anzeige in Tabellen – Datums-Eingabefelder (Kalender-Picker) folgen weiterhin dem Browser-Format',
+      ],
+      en: [
+        'Displayed dates in all lists now show weekday + date, e.g. "Fr 21.08.2026" (holidays, blocked periods, PI & sprints)',
+        'Weekday abbreviation follows the selected language (DE/EN)',
+        'Only affects table display – date input fields (calendar pickers) still follow the browser\\'s own format',
+      ],
+    },
+  },
   {
     version: '1.7.1',
     date: '2026-08-21',

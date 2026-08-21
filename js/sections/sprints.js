@@ -2,6 +2,7 @@ import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
 import { ICON_EDIT, ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
 import { createSortState, sortableHeader, wireSortHeaders, sortArray } from '../sortable.js';
+import { formatDate } from '../dateFormat.js';
 
 export async function renderSprints(container) {
   const sortState = createSortState('sprint_number', true);
@@ -170,8 +171,8 @@ export async function renderSprints(container) {
       <tr data-id="${s.id}">
         <td class="mono">${s.sprint_number}</td>
         <td>${escapeHtml(s.name || '')}</td>
-        <td class="mono">${s.start_date}</td>
-        <td class="mono">${s.end_date}</td>
+        <td class="mono">${formatDate(s.start_date)}</td>
+        <td class="mono">${formatDate(s.end_date)}</td>
         <td><input type="checkbox" class="closed-toggle" ${s.is_closed ? 'checked' : ''}></td>
         <td class="row-actions">
           ${iconButton(ICON_EDIT, t('common.edit'), 'edit-btn')}

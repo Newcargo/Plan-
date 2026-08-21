@@ -2,6 +2,7 @@ import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
 import { ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
 import { createSortState, sortableHeader, wireSortHeaders, sortArray } from '../sortable.js';
+import { formatDate } from '../dateFormat.js';
 
 export async function renderBlocked(container) {
   const sortState = createSortState('start_date', false);
@@ -85,8 +86,8 @@ export async function renderBlocked(container) {
       const isPast = bp.end_date < today;
       return `
         <tr data-id="${bp.id}" class="${isPast ? 'row-past' : ''}">
-          <td class="mono">${bp.start_date}</td>
-          <td class="mono">${bp.end_date}</td>
+          <td class="mono">${formatDate(bp.start_date)}</td>
+          <td class="mono">${formatDate(bp.end_date)}</td>
           <td>${escapeHtml(bp.label)}</td>
           <td>${bp.capacity_impact
             ? `<span class="badge badge-danger">ja</span>`

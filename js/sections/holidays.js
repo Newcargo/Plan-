@@ -2,6 +2,7 @@ import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
 import { ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
 import { createSortState, sortableHeader, wireSortHeaders, sortArray } from '../sortable.js';
+import { formatDate } from '../dateFormat.js';
 
 export async function renderHolidays(container) {
   // Standard: Datum Z-A (neueste/zukuenftigste zuerst), per Klick auf Spaltenkopf umschaltbar
@@ -78,7 +79,7 @@ export async function renderHolidays(container) {
       const isPast = h.date < today;
       return `
         <tr data-id="${h.id}" class="${isPast ? 'row-past' : ''}">
-          <td class="mono">${h.date}</td>
+          <td class="mono">${formatDate(h.date)}</td>
           <td>${escapeHtml(h.name)}</td>
           <td>${escapeHtml(h.note || '')}</td>
           <td class="row-actions">${iconButton(ICON_DELETE, t('common.delete'), 'delete-btn')}</td>
