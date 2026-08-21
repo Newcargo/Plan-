@@ -1,8 +1,12 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
 import { ICON_EDIT, ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
+import { createSortState, sortableHeader, wireSortHeaders, sortArray } from '../sortable.js';
 
 export async function renderTeams(container) {
+  const sortState = createSortState('name', true);
+  let teamsData = [];
+
   container.innerHTML = `
     <header><h1>${t('nav.teams')}</h1></header>
     <div class="card">
@@ -26,8 +30,8 @@ export async function renderTeams(container) {
 
     <div class="card">
       <table>
-        <thead><tr>
-          <th>${t('teams.name')}</th>
+        <thead><tr id="teams-thead-row">
+          ${sortableHeader(t('teams.name'), 'name', sortState)}
           <th class="num">${t('teams.focus')}</th>
           <th class="num">${t('teams.buffer')}</th>
           <th></th>
@@ -36,6 +40,11 @@ export async function renderTeams(container) {
       </table>
     </div>
   `;
+
+  wireSortHeaders(document.getElementById('teams-thead-row'), sortState, () => {
+    renderRows();
+    refreshHeader();
+  });
 
   document.getElementById('team-form').addEventListener('submit', async e => {
     e.preventDefault();
@@ -50,13 +59,34 @@ export async function renderTeams(container) {
     loadTeams();
   });
 
+  function refreshHeader() {
+    document.getElementById('teams-thead-row').innerHTML = `
+      ${sortableHeader(t('teams.name'), 'name', sortState)}
+      <th class="num">${t('teams.focus')}</th>
+      <th class="num">${t('teams.buffer')}</th>
+      <th></th>
+    `;
+    wireSortHeaders(document.getElementById('teams-thead-row'), sortState, () => {
+      renderRows();
+      refreshHeader();
+    });
+  }
+
   async function loadTeams() {
     const tbody = document.getElementById('teams-tbody');
-    const { data, error } = await supabase.from('teams').select('*').order('name');
+    const { data, error } = await supabase.from('teams').select('*');
     if (error) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">${t('common.error')}</td></tr>`; return; }
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">${t('common.none')}</td></tr>`; return; }
+    teamsData = data || [];
+    renderRows();
+  }
 
-    tbody.innerHTML = data.map(team => `
+  function renderRows() {
+    const tbody = document.getElementById('teams-tbody');
+    if (!teamsData.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">${t('common.none')}</td></tr>`; return; }
+
+    sortArray(teamsData, sortState);
+
+    tbody.innerHTML = teamsData.map(team => `
       <tr data-id="${team.id}">
         <td>${escapeHtml(team.name)}</td>
         <td class="num mono">${Number(team.focus_factor).toFixed(2)}</td>
@@ -81,7 +111,7 @@ export async function renderTeams(container) {
     tbody.querySelectorAll('.edit-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const row = btn.closest('tr');
-        const team = data.find(t2 => t2.id === row.dataset.id);
+        const team = teamsData.find(t2 => t2.id === row.dataset.id);
         const newFocus = prompt(t('teams.focus'), team.focus_factor);
         if (newFocus === null) return;
         const newBuffer = prompt(t('teams.buffer'), team.unplanned_buffer);

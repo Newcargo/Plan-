@@ -1,8 +1,11 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
 import { ICON_EDIT, ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
+import { createSortState, sortableHeader, wireSortHeaders, sortArray } from '../sortable.js';
 
 export async function renderSprints(container) {
+  const sortState = createSortState('sprint_number', true);
+  let sprintsData = [];
   container.innerHTML = `
     <header><h1>${t('sprints.title')}</h1></header>
 
@@ -51,9 +54,7 @@ export async function renderSprints(container) {
         </div>
       </form>
       <table>
-        <thead><tr>
-          <th>${t('sprints.sprintNr')}</th><th>${t('common.name')}</th><th>${t('sprints.start')}</th><th>${t('sprints.end')}</th><th>${t('sprints.closed')}</th><th></th>
-        </tr></thead>
+        <thead><tr id="sprint-thead-row"></tr></thead>
         <tbody id="sprint-tbody"><tr><td colspan="6" class="empty-state">${t('common.loading')}</td></tr></tbody>
       </table>
     </div>
@@ -63,6 +64,19 @@ export async function renderSprints(container) {
   const sprintForm = document.getElementById('sprint-form');
   const submitBtn = document.getElementById('sprint-submit-btn');
   const cancelBtn = document.getElementById('sprint-cancel-btn');
+
+  function wireHead() {
+    const row = document.getElementById('sprint-thead-row');
+    row.innerHTML = `
+      ${sortableHeader(t('sprints.sprintNr'), 'sprint_number', sortState)}
+      ${sortableHeader(t('common.name'), 'name', sortState)}
+      ${sortableHeader(t('sprints.start'), 'start_date', sortState)}
+      ${sortableHeader(t('sprints.end'), 'end_date', sortState)}
+      <th>${t('sprints.closed')}</th><th></th>
+    `;
+    wireSortHeaders(row, sortState, () => { renderSprintRows(); wireHead(); });
+  }
+  wireHead();
 
   document.getElementById('pi-form').addEventListener('submit', async e => {
     e.preventDefault();
@@ -138,13 +152,21 @@ export async function renderSprints(container) {
   async function loadSprints() {
     resetSprintForm();
     const tbody = document.getElementById('sprint-tbody');
-    if (!piSelect.value) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${t('common.none')}</td></tr>`; return; }
+    if (!piSelect.value) { sprintsData = []; tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${t('common.none')}</td></tr>`; return; }
 
-    const { data, error } = await supabase.from('sprints').select('*').eq('pi_id', piSelect.value).order('sprint_number');
+    const { data, error } = await supabase.from('sprints').select('*').eq('pi_id', piSelect.value);
     if (error) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${t('common.error')}</td></tr>`; return; }
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${t('common.none')}</td></tr>`; return; }
+    sprintsData = data || [];
+    renderSprintRows();
+  }
 
-    tbody.innerHTML = data.map(s => `
+  function renderSprintRows() {
+    const tbody = document.getElementById('sprint-tbody');
+    if (!sprintsData.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${t('common.none')}</td></tr>`; return; }
+
+    sortArray(sprintsData, sortState);
+
+    tbody.innerHTML = sprintsData.map(s => `
       <tr data-id="${s.id}">
         <td class="mono">${s.sprint_number}</td>
         <td>${escapeHtml(s.name || '')}</td>
@@ -169,7 +191,7 @@ export async function renderSprints(container) {
     tbody.querySelectorAll('.edit-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.closest('tr').dataset.id;
-        const s = data.find(x => x.id === id);
+        const s = sprintsData.find(x => x.id === id);
         document.getElementById('f-sprint-id').value = s.id;
         document.getElementById('f-sprint-nr').value = s.sprint_number;
         document.getElementById('f-sprint-name').value = s.name || '';

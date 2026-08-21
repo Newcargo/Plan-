@@ -1,8 +1,13 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
 import { ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
+import { createSortState, sortableHeader, wireSortHeaders, sortArray } from '../sortable.js';
 
 export async function renderHolidays(container) {
+  // Standard: Datum Z-A (neueste/zukuenftigste zuerst), per Klick auf Spaltenkopf umschaltbar
+  const sortState = createSortState('date', false);
+  let holidaysData = [];
+
   container.innerHTML = `
     <header><h1>${t('nav.holidays')}</h1></header>
     <div class="card">
@@ -26,13 +31,22 @@ export async function renderHolidays(container) {
 
     <div class="card">
       <table>
-        <thead><tr>
-          <th>${t('holidays.date')}</th><th>${t('holidays.name')}</th><th>${t('holidays.note')}</th><th></th>
-        </tr></thead>
+        <thead><tr id="hol-thead-row"></tr></thead>
         <tbody id="hol-tbody"><tr><td colspan="4" class="empty-state">${t('common.loading')}</td></tr></tbody>
       </table>
     </div>
   `;
+
+  function wireHead() {
+    const row = document.getElementById('hol-thead-row');
+    row.innerHTML = `
+      ${sortableHeader(t('holidays.date'), 'date', sortState)}
+      ${sortableHeader(t('holidays.name'), 'name', sortState)}
+      <th>${t('holidays.note')}</th><th></th>
+    `;
+    wireSortHeaders(row, sortState, () => { renderRows(); wireHead(); });
+  }
+  wireHead();
 
   document.getElementById('hol-form').addEventListener('submit', async e => {
     e.preventDefault();
@@ -47,14 +61,20 @@ export async function renderHolidays(container) {
 
   async function load() {
     const tbody = document.getElementById('hol-tbody');
-    // Z-A sortiert (neueste/zukuenftigste zuerst)
-    const { data, error } = await supabase.from('holidays').select('*').order('date', { ascending: false });
+    const { data, error } = await supabase.from('holidays').select('*');
     if (error) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">${t('common.error')}</td></tr>`; return; }
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">${t('common.none')}</td></tr>`; return; }
+    holidaysData = data || [];
+    renderRows();
+  }
 
+  function renderRows() {
+    const tbody = document.getElementById('hol-tbody');
+    if (!holidaysData.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">${t('common.none')}</td></tr>`; return; }
+
+    sortArray(holidaysData, sortState);
     const today = new Date().toISOString().slice(0, 10);
 
-    tbody.innerHTML = data.map(h => {
+    tbody.innerHTML = holidaysData.map(h => {
       const isPast = h.date < today;
       return `
         <tr data-id="${h.id}" class="${isPast ? 'row-past' : ''}">

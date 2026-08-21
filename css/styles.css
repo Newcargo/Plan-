@@ -262,6 +262,28 @@ th .field-label { display: inline-flex; }
 .info-icon:hover .tooltip-bubble, .info-icon:focus-visible .tooltip-bubble { visibility: visible; opacity: 1; }
 th .info-icon .tooltip-bubble { bottom: auto; top: 135%; }
 
+/* Sortierbare Tabellen-Spaltenkoepfe */
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--text); }
+th.sortable .sort-arrow { display: inline-block; margin-left: 0.3rem; opacity: 0.4; font-size: 0.7rem; }
+th.sortable.sort-active .sort-arrow { opacity: 1; color: var(--accent); }
+
+/* Rollen & Zugriff: ausklappbare Zeilen (Variante B) */
+.role-list-header { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-bottom: 1px solid var(--border); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+.role-row-header { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0.5rem; border-bottom: 1px solid var(--border); cursor: pointer; }
+.role-row-header:hover { background: var(--bg); }
+.role-chevron { width: 12px; font-size: 0.7rem; color: var(--text-muted); flex-shrink: 0; }
+.role-name { flex: 0 0 150px; font-size: 0.88rem; color: var(--text); font-weight: 500; }
+.role-email { flex: 0 0 220px; font-size: 0.82rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.role-summary { flex: 1; font-size: 0.82rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.role-detail-panel { background: var(--bg); border-radius: var(--radius); padding: 0.9rem 1rem; margin: 0.5rem 0 0.75rem 1.7rem; }
+.role-detail-checks { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.role-detail-checks label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text); }
+.role-detail-checks input { width: auto; }
+.role-detail-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.65rem; }
+.role-detail-footer label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text); }
+.role-detail-footer input[type="checkbox"] { width: auto; }
+
 /* Vergangene Feiertage/Sperrzeiten grau darstellen */
 .row-past td { color: var(--text-muted); }
 .row-past .badge { opacity: 0.6; }

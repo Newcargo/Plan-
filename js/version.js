@@ -6,9 +6,37 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.4.0';
+export const APP_VERSION = '1.6.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.6.0',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'E-Mail-Adresse nachträglich änderbar: im ausgeklappten Bereich bei Rollen & Zugriff, aktualisiert Login (Supabase Auth) und Stammdaten gleichzeitig',
+      ],
+      en: [
+        'Email address can now be changed later: in the expanded panel under roles & access, updates both the login (Supabase Auth) and the employee record',
+      ],
+    },
+  },
+  {
+    version: '1.5.0',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'CORS-Fehler beim Login-Erstellen behoben (Edge Function "admin-users" serverseitig korrigiert)',
+        'Alphabetische Sortierung (klickbare Spaltenköpfe mit Pfeil) in allen Listen: Teams, Mitarbeiter, Feiertage, Sperrzeiten, PI & Sprints, Rollen & Zugriff',
+        'Rollen & Zugriff komplett neu gestaltet: ausklappbare Zeilen statt Checkbox-Raster, E-Mail-Adresse jetzt direkt sichtbar',
+      ],
+      en: [
+        'Fixed CORS error when creating a login (server-side fix in the "admin-users" Edge Function)',
+        'Alphabetical sorting (clickable column headers with arrow) added to all lists: teams, employees, holidays, blocked periods, PI & sprints, roles & access',
+        'Roles & access redesigned: expandable rows instead of a checkbox grid, email address now visible directly',
+      ],
+    },
+  },
   {
     version: '1.4.0',
     date: '2026-08-21',

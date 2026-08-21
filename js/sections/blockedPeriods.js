@@ -1,8 +1,12 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
 import { ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
+import { createSortState, sortableHeader, wireSortHeaders, sortArray } from '../sortable.js';
 
 export async function renderBlocked(container) {
+  const sortState = createSortState('start_date', false);
+  let bpData = [];
+
   container.innerHTML = `
     <header><h1>${t('nav.blocked')}</h1></header>
     <div class="card">
@@ -29,13 +33,23 @@ export async function renderBlocked(container) {
 
     <div class="card">
       <table>
-        <thead><tr>
-          <th>${t('blocked.start')}</th><th>${t('blocked.end')}</th><th>${t('blocked.label')}</th><th>${t('blocked.capacityImpact')}</th><th></th>
-        </tr></thead>
+        <thead><tr id="bp-thead-row"></tr></thead>
         <tbody id="bp-tbody"><tr><td colspan="5" class="empty-state">${t('common.loading')}</td></tr></tbody>
       </table>
     </div>
   `;
+
+  function wireHead() {
+    const row = document.getElementById('bp-thead-row');
+    row.innerHTML = `
+      ${sortableHeader(t('blocked.start'), 'start_date', sortState)}
+      ${sortableHeader(t('blocked.end'), 'end_date', sortState)}
+      ${sortableHeader(t('blocked.label'), 'label', sortState)}
+      <th>${t('blocked.capacityImpact')}</th><th></th>
+    `;
+    wireSortHeaders(row, sortState, () => { renderRows(); wireHead(); });
+  }
+  wireHead();
 
   document.getElementById('bp-form').addEventListener('submit', async e => {
     e.preventDefault();
@@ -54,14 +68,20 @@ export async function renderBlocked(container) {
 
   async function load() {
     const tbody = document.getElementById('bp-tbody');
-    // Z-A sortiert (neueste/zukuenftigste zuerst)
-    const { data, error } = await supabase.from('blocked_periods').select('*').order('start_date', { ascending: false });
+    const { data, error } = await supabase.from('blocked_periods').select('*');
     if (error) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">${t('common.error')}</td></tr>`; return; }
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">${t('common.none')}</td></tr>`; return; }
+    bpData = data || [];
+    renderRows();
+  }
 
+  function renderRows() {
+    const tbody = document.getElementById('bp-tbody');
+    if (!bpData.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">${t('common.none')}</td></tr>`; return; }
+
+    sortArray(bpData, sortState);
     const today = new Date().toISOString().slice(0, 10);
 
-    tbody.innerHTML = data.map(bp => {
+    tbody.innerHTML = bpData.map(bp => {
       const isPast = bp.end_date < today;
       return `
         <tr data-id="${bp.id}" class="${isPast ? 'row-past' : ''}">

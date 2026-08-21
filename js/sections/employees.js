@@ -1,8 +1,10 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
 import { ICON_EDIT, ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
+import { createSortState, sortableHeader, wireSortHeaders, sortArray } from '../sortable.js';
 
 export async function renderEmployees(container) {
+  const sortState = createSortState('full_name', true);
   container.innerHTML = `
     <header><h1>${t('nav.employees')}</h1></header>
     <div class="card">
@@ -44,9 +46,9 @@ export async function renderEmployees(container) {
 
     <div class="card">
       <table>
-        <thead><tr>
-          <th>${t('employees.fullName')}</th>
-          <th>${t('employees.team')}</th>
+        <thead><tr id="emp-thead-row">
+          ${sortableHeader(t('employees.fullName'), 'full_name', sortState)}
+          ${sortableHeader(t('employees.team'), 'team_name', sortState)}
           <th class="num">${t('employees.employmentPct')}</th>
           <th class="num">${t('employees.effective')}</th>
           <th>${t('employees.hasLogin')}</th>
@@ -110,27 +112,52 @@ export async function renderEmployees(container) {
     loadEmployees();
   });
 
+  let empsData = [];
+  let reductionMap = new Map();
+  const teamMap = new Map(teams.map(tm => [tm.id, tm.name]));
+
+  function wireHead() {
+    const row = document.getElementById('emp-thead-row');
+    row.innerHTML = `
+      ${sortableHeader(t('employees.fullName'), 'full_name', sortState)}
+      ${sortableHeader(t('employees.team'), 'team_name', sortState)}
+      <th class="num">${t('employees.employmentPct')}</th>
+      <th class="num">${t('employees.effective')}</th>
+      <th>${t('employees.hasLogin')}</th>
+      <th></th>
+    `;
+    wireSortHeaders(row, sortState, () => { renderRows(); wireHead(); });
+  }
+  wireHead();
+
   async function loadEmployees() {
     const tbody = document.getElementById('emp-tbody');
     const { data: emps, error } = await supabase
       .from('employees')
-      .select('id, full_name, team_id, employment_pct, focus_factor_override, individual_factor, individual_factor_note, is_external, auth_user_id')
-      .order('full_name');
+      .select('id, full_name, team_id, employment_pct, focus_factor_override, individual_factor, individual_factor_note, is_external, auth_user_id');
 
     if (error) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${t('common.error')}</td></tr>`; return; }
-    if (!emps.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${t('common.none')}</td></tr>`; return; }
 
     const { data: reductions } = await supabase.from('v_employee_reduction').select('employee_id, effective_reduction_pct');
-    const reductionMap = new Map((reductions || []).map(r => [r.employee_id, r.effective_reduction_pct]));
-    const teamMap = new Map(teams.map(tm => [tm.id, tm.name]));
+    reductionMap = new Map((reductions || []).map(r => [r.employee_id, r.effective_reduction_pct]));
 
-    tbody.innerHTML = emps.map(emp => {
+    empsData = (emps || []).map(emp => ({ ...emp, team_name: teamMap.get(emp.team_id) || '' }));
+    renderRows();
+  }
+
+  function renderRows() {
+    const tbody = document.getElementById('emp-tbody');
+    if (!empsData.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${t('common.none')}</td></tr>`; return; }
+
+    sortArray(empsData, sortState);
+
+    tbody.innerHTML = empsData.map(emp => {
       const eff = reductionMap.get(emp.id);
       const effPct = eff !== undefined ? Math.round(Number(eff) * 100) + '%' : '–';
       return `
         <tr data-id="${emp.id}">
           <td>${escapeHtml(emp.full_name)}${emp.is_external ? ` <span class="badge badge-muted">extern</span>` : ''}</td>
-          <td>${escapeHtml(teamMap.get(emp.team_id) || '–')}</td>
+          <td>${escapeHtml(emp.team_name || '–')}</td>
           <td class="num mono">${Number(emp.employment_pct).toFixed(2)}</td>
           <td class="num mono">${effPct}</td>
           <td>${emp.auth_user_id
@@ -147,7 +174,7 @@ export async function renderEmployees(container) {
     tbody.querySelectorAll('.edit-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.closest('tr').dataset.id;
-        const emp = emps.find(e => e.id === id);
+        const emp = empsData.find(e => e.id === id);
         document.getElementById('f-id').value = emp.id;
         document.getElementById('f-name').value = emp.full_name;
         teamSelect.value = emp.team_id || '';
