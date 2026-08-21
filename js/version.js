@@ -6,9 +6,23 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.8.0';
+export const APP_VERSION = '1.8.1';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.1',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Kritische Fehlerbehebung: Ein falsch escapter Apostroph in einem Changelog-Text (js/version.js) verursachte einen JavaScript-Syntaxfehler, der den Start der gesamten App verhinderte',
+        'Alle Dateien nochmals als echte ES-Module getestet, um ähnliche Fehler auszuschliessen',
+      ],
+      en: [
+        'Critical bug fix: an incorrectly escaped apostrophe in a changelog text (js/version.js) caused a JavaScript syntax error that prevented the entire app from starting',
+        'Re-tested all files as real ES modules to rule out similar issues',
+      ],
+    },
+  },
   {
     version: '1.8.0',
     date: '2026-08-21',
@@ -21,7 +35,7 @@ export const CHANGELOG = [
       en: [
         'Displayed dates in all lists now show weekday + date, e.g. "Fr 21.08.2026" (holidays, blocked periods, PI & sprints)',
         'Weekday abbreviation follows the selected language (DE/EN)',
-        'Only affects table display – date input fields (calendar pickers) still follow the browser\\'s own format',
+        'Only affects table display – date input fields (calendar pickers) still follow the browser\'s own format',
       ],
     },
   },
