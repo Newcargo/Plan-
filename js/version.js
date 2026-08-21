@@ -6,9 +6,31 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.9.1';
+export const APP_VERSION = '1.10.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.10.0',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Neuer Bereich "Genehmigungen" für Stufe-2-Genehmiger, People Pool Manager und Admin',
+        'Stufe 2: Anträge genehmigen (mit optionalem Kommentar) oder ablehnen (Kommentar Pflicht)',
+        'People Pool Manager: externe, bereits von der Projektleitung genehmigte Anträge als "an RUAG Office gemeldet" markieren',
+        'Mitarbeiter-Selbstbestätigung: nach Genehmigung kann intern direkt "Final bestätigen" geklickt werden, extern nach RUAG-Office-Meldung',
+        'Externe Kollegen erhalten einen vorausgefüllten Mail-Entwurf an den People Pool Manager (Adresse in Einstellungen konfigurierbar)',
+        'Phase 2 von 3 des Urlaubskalenders – Änderungs-/Stornoprozess für bereits final gebuchte Tage folgt als Phase 3',
+      ],
+      en: [
+        'New "Approvals" area for level-2 approvers, the People Pool Manager, and Admin',
+        'Level 2: approve requests (optional comment) or reject them (comment required)',
+        'People Pool Manager: mark external requests already approved by the project lead as "forwarded to RUAG Office"',
+        'Employee self-confirmation: internal staff can confirm "final" directly after approval, external staff after the RUAG Office step',
+        'External colleagues get a pre-filled email draft to the People Pool Manager (address configurable in settings)',
+        'Phase 2 of 3 for the leave calendar – the change/cancellation process for already final-booked days is Phase 3',
+      ],
+    },
+  },
   {
     version: '1.9.1',
     date: '2026-08-21',

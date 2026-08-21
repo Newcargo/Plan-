@@ -20,6 +20,14 @@ export async function renderMyLeave(container, context) {
   }
 
   let leaveData = [];
+  let isExternal = false;
+  let ppmEmail = '';
+
+  const { data: empDetail } = await supabase.from('employees').select('is_external').eq('id', employee.id).maybeSingle();
+  isExternal = !!(empDetail && empDetail.is_external);
+
+  const { data: cfg } = await supabase.from('app_config').select('value').eq('key', 'people_pool_manager_email').maybeSingle();
+  ppmEmail = (cfg && cfg.value) || '';
 
   container.innerHTML = `
     <header><h1>${t('myLeave.title')}</h1></header>
@@ -117,6 +125,7 @@ export async function renderMyLeave(container, context) {
       employee_id: employee.id,
       start_date: start,
       end_date: end,
+      is_external_process: isExternal,
     });
 
     if (error) {
@@ -150,15 +159,48 @@ export async function renderMyLeave(container, context) {
     tbody.innerHTML = leaveData.map(lr => {
       const meta = STATUS_META[lr.status] || { label: lr.status, cls: 'badge-muted' };
       const canWithdraw = lr.status === 'beantragt';
+
+      let actions = '';
+      if (canWithdraw) {
+        actions += iconButton(ICON_DELETE, t('myLeave.withdraw'), 'withdraw-btn');
+      }
+      if (lr.status === 'genehmigt_projekt' && isExternal) {
+        const subject = encodeURIComponent(t('myLeave.mailSubject').replace('{name}', employee.full_name));
+        const body = encodeURIComponent(
+          t('myLeave.mailBody')
+            .replace('{name}', employee.full_name)
+            .replace('{start}', formatDate(lr.start_date))
+            .replace('{end}', formatDate(lr.end_date))
+        );
+        const mailtoHref = `mailto:${encodeURIComponent(ppmEmail)}?subject=${subject}&body=${body}`;
+        actions += `<a href="${mailtoHref}" class="btn btn-secondary" style="text-decoration:none;">${t('myLeave.sendMail')}</a>`;
+      }
+      if (lr.status === 'genehmigt_projekt' && !isExternal) {
+        actions += `<button type="button" class="btn btn-secondary confirm-final-btn">${t('myLeave.confirmFinal')}</button>`;
+      }
+      if (lr.status === 'bei_ruag_office') {
+        actions += `<button type="button" class="btn btn-secondary confirm-final-btn">${t('myLeave.confirmFinal')}</button>`;
+      }
+
       return `
         <tr data-id="${lr.id}">
           <td class="mono">${formatDate(lr.start_date)} – ${formatDate(lr.end_date)}</td>
           <td><span class="badge ${meta.cls}">${t('myLeave.status.' + lr.status) || meta.label}</span></td>
           <td>${escapeHtml(lr.comment_stufe2 || '')}</td>
-          <td class="row-actions">${canWithdraw ? iconButton(ICON_DELETE, t('myLeave.withdraw'), 'withdraw-btn') : ''}</td>
+          <td class="row-actions">${actions}</td>
         </tr>
       `;
     }).join('');
+
+    tbody.querySelectorAll('.confirm-final-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm(t('myLeave.confirmFinalConfirm'))) return;
+        const id = btn.closest('tr').dataset.id;
+        const { error } = await supabase.from('leave_requests').update({ status: 'final_gebucht' }).eq('id', id);
+        if (error) { alert(t('common.error') + '\n' + error.message); return; }
+        load();
+      });
+    });
 
     tbody.querySelectorAll('.withdraw-btn').forEach(btn => {
       btn.addEventListener('click', async () => {

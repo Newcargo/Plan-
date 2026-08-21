@@ -13,6 +13,7 @@ import { renderSettings } from './sections/settings.js';
 import { renderRoles } from './sections/roles.js';
 import { renderChangelog } from './sections/changelog.js';
 import { renderMyLeave } from './sections/myLeave.js';
+import { renderApprovals } from './sections/approvals.js';
 import { APP_VERSION } from './version.js';
 
 const routes = {
@@ -27,6 +28,7 @@ const routes = {
   roles: renderRoles,
   changelog: renderChangelog,
   'my-leave': renderMyLeave,
+  approvals: renderApprovals,
 };
 
 const loginScreen = document.getElementById('login-screen');
@@ -51,8 +53,16 @@ async function navigate(route) {
 function applyRoleVisibility() {
   document.querySelectorAll('.nav-item[data-route]').forEach(btn => {
     const requires = btn.dataset.requires;
-    if (!requires) { btn.hidden = false; return; }
-    btn.hidden = !currentRoles.has(requires);
+    const requiresAny = btn.dataset.requiresAny;
+
+    if (requires) {
+      btn.hidden = !currentRoles.has(requires);
+    } else if (requiresAny) {
+      const options = requiresAny.split(',');
+      btn.hidden = !options.some(r => currentRoles.has(r));
+    } else {
+      btn.hidden = false;
+    }
   });
 }
 

@@ -16,6 +16,9 @@ export async function renderSettings(container) {
 
         ${fieldLabel(t('roles.blocked') + ' – Kontaktperson (Name, keine E-Mail)', 'Name, der gesperrten Mitarbeitenden beim Login-Versuch angezeigt wird, an wen sie sich wenden sollen. Bewusst nur ein Name, keine E-Mail-Adresse.')}
         <input type="text" id="f-blocked-contact">
+
+        ${fieldLabel(t('settings.ppmEmail'), 'E-Mail-Adresse des People Pool Managers. Wird als Empfänger im vorausgefüllten Mail-Entwurf für externe Kollegen verwendet.')}
+        <input type="email" id="f-ppm-email">
       </div>
       <div class="form-actions" style="justify-content:flex-start;align-items:center;">
         <button id="save-btn" class="btn btn-primary">${t('common.save')}</button>
@@ -29,11 +32,13 @@ export async function renderSettings(container) {
   document.getElementById('f-window').value = map.get('velocity_rolling_window') ?? 3;
   document.getElementById('f-sprintcount').value = map.get('default_pi_sprint_count') ?? 5;
   document.getElementById('f-blocked-contact').value = map.get('blocked_contact_name') ?? 'Admin';
+  document.getElementById('f-ppm-email').value = map.get('people_pool_manager_email') ?? '';
 
   document.getElementById('save-btn').addEventListener('click', async () => {
     const windowVal = Number(document.getElementById('f-window').value);
     const sprintCountVal = Number(document.getElementById('f-sprintcount').value);
     const contactName = document.getElementById('f-blocked-contact').value.trim() || 'Admin';
+    const ppmEmail = document.getElementById('f-ppm-email').value.trim();
 
     const { error: e1 } = await supabase.from('app_config').upsert(
       { key: 'velocity_rolling_window', value: windowVal }, { onConflict: 'key' }
@@ -44,9 +49,12 @@ export async function renderSettings(container) {
     const { error: e3 } = await supabase.from('app_config').upsert(
       { key: 'blocked_contact_name', value: contactName }, { onConflict: 'key' }
     );
+    const { error: e4 } = await supabase.from('app_config').upsert(
+      { key: 'people_pool_manager_email', value: ppmEmail }, { onConflict: 'key' }
+    );
 
     const msg = document.getElementById('save-msg');
-    if (e1 || e2 || e3) {
+    if (e1 || e2 || e3 || e4) {
       msg.style.color = 'var(--danger)';
       msg.textContent = t('common.error');
     } else {
