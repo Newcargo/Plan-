@@ -7,15 +7,18 @@ export async function renderSprints(container) {
     <header><h1>${t('sprints.title')}</h1></header>
 
     <div class="card">
-      <form id="pi-form" class="inline-form">
-        <div class="field">
+      <div class="form-panel-title">${t('sprints.addPi')}</div>
+      <form id="pi-form">
+        <div class="form-grid">
           <label>${t('sprints.piName')}</label>
           <input type="text" id="f-pi-name" placeholder="PI 2026.2" required>
         </div>
-        <button type="submit" class="btn btn-primary">${t('sprints.addPi')}</button>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">${t('sprints.addPi')}</button>
+        </div>
       </form>
 
-      <div class="field" style="max-width:360px;">
+      <div class="form-grid" style="margin-top:0.5rem;">
         <label>${t('sprints.piName')}</label>
         <div style="display:flex; gap:0.5rem; align-items:center;">
           <select id="pi-select" style="flex:1;"></select>
@@ -26,26 +29,26 @@ export async function renderSprints(container) {
     </div>
 
     <div class="card">
-      <form id="sprint-form" class="inline-form">
+      <div class="form-panel-title" id="sprint-form-title">${t('sprints.addSprint')}</div>
+      <form id="sprint-form">
         <input type="hidden" id="f-sprint-id">
-        <div class="field">
+        <div class="form-grid">
           <label>${t('sprints.sprintNr')}</label>
-          <input type="number" id="f-sprint-nr" min="1" required>
-        </div>
-        <div class="field">
+          <input type="number" id="f-sprint-nr" min="1" required class="narrow">
+
           <label>${t('common.name')}</label>
           <input type="text" id="f-sprint-name" placeholder="Sprint 1">
-        </div>
-        <div class="field">
+
           <label>${t('sprints.start')}</label>
-          <input type="date" id="f-sprint-start" required>
-        </div>
-        <div class="field">
+          <input type="date" id="f-sprint-start" required class="narrow">
+
           <label>${t('sprints.end')}</label>
-          <input type="date" id="f-sprint-end" required>
+          <input type="date" id="f-sprint-end" required class="narrow">
         </div>
-        <button type="submit" class="btn btn-primary" id="sprint-submit-btn">${t('sprints.addSprint')}</button>
-        <button type="button" class="btn btn-secondary" id="sprint-cancel-btn" hidden>${t('common.cancel')}</button>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="sprint-cancel-btn" hidden>${t('common.cancel')}</button>
+          <button type="submit" class="btn btn-primary" id="sprint-submit-btn">${t('sprints.addSprint')}</button>
+        </div>
       </form>
       <table>
         <thead><tr>
@@ -97,6 +100,7 @@ export async function renderSprints(container) {
     sprintForm.reset();
     document.getElementById('f-sprint-id').value = '';
     submitBtn.textContent = t('sprints.addSprint');
+    document.getElementById('sprint-form-title').textContent = t('sprints.addSprint');
     cancelBtn.hidden = true;
   }
 
@@ -172,6 +176,7 @@ export async function renderSprints(container) {
         document.getElementById('f-sprint-start').value = s.start_date;
         document.getElementById('f-sprint-end').value = s.end_date;
         submitBtn.textContent = t('common.save');
+        document.getElementById('sprint-form-title').textContent = t('common.edit');
         cancelBtn.hidden = false;
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });

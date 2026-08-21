@@ -6,40 +6,44 @@ export async function renderEmployees(container) {
   container.innerHTML = `
     <header><h1>${t('nav.employees')}</h1></header>
     <div class="card">
-      <form id="emp-form" class="inline-form">
+      <div class="form-panel-title" id="emp-form-title">${t('common.add')}</div>
+      <form id="emp-form">
         <input type="hidden" id="f-id">
-        <div class="field">
+        <div class="form-grid">
           <label>${t('employees.fullName')}</label>
           <input type="text" id="f-name" required>
-        </div>
-        <div class="field">
+
           <label>${t('employees.team')}</label>
           <select id="f-team"></select>
-        </div>
-        <div class="field">
+
           <label>${t('employees.employmentPct')}</label>
-          <input type="number" id="f-pensum" min="0" max="1" step="0.01" value="1.00" required>
-        </div>
-        <div class="field">
+          <input type="number" id="f-pensum" min="0" max="1" step="0.01" value="1.00" required class="narrow">
+
+          <div class="divider"></div>
+
           <label>${t('employees.focusOverride')}</label>
-          <input type="number" id="f-focus-override" min="0" max="1" step="0.01" placeholder="${t('employees.focusOverrideHint')}">
-        </div>
-        <div class="field">
+          <input type="number" id="f-focus-override" min="0" max="1" step="0.01">
+          <div class="hint-row">${t('employees.focusOverrideHint')}</div>
+
           <label>${t('employees.individualFactor')}</label>
           <input type="number" id="f-indiv-factor" min="0" max="1" step="0.01">
-        </div>
-        <div class="field">
+
           <label>${t('employees.individualNote')}</label>
           <input type="text" id="f-indiv-note">
-        </div>
-        <div class="field checkbox-field">
-          <input type="checkbox" id="f-external">
-          <label>${t('employees.isExternal')}</label>
-        </div>
-        <button type="submit" class="btn btn-primary" id="emp-submit-btn">${t('common.add')}</button>
-        <button type="button" class="btn btn-secondary" id="emp-cancel-btn" hidden>${t('common.cancel')}</button>
-      </form>
 
+          <div class="divider"></div>
+
+          <label>${t('employees.isExternal')}</label>
+          <input type="checkbox" id="f-external">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="emp-cancel-btn" hidden>${t('common.cancel')}</button>
+          <button type="submit" class="btn btn-primary" id="emp-submit-btn">${t('common.add')}</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
       <table>
         <thead><tr>
           <th>${t('employees.fullName')}</th>
@@ -72,6 +76,7 @@ export async function renderEmployees(container) {
     document.getElementById('f-id').value = '';
     document.getElementById('f-pensum').value = '1.00';
     submitBtn.textContent = t('common.add');
+    document.getElementById('emp-form-title').textContent = t('common.add');
     cancelBtn.hidden = true;
   }
 
@@ -153,6 +158,7 @@ export async function renderEmployees(container) {
         document.getElementById('f-indiv-note').value = emp.individual_factor_note ?? '';
         document.getElementById('f-external').checked = emp.is_external;
         submitBtn.textContent = t('common.save');
+        document.getElementById('emp-form-title').textContent = t('common.edit');
         cancelBtn.hidden = false;
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });

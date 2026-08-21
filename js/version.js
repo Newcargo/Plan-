@@ -6,9 +6,25 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.2.0';
+export const APP_VERSION = '1.3.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.3.0',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Einheitliches Formular-Design auf allen Seiten: Label links, Feld rechts (zweispaltig)',
+        'Betrifft: Teams, Mitarbeiter, Feiertage, Sperrzeiten, PI & Sprints, Konfidenzband, Einstellungen, Rollen & Zugriff',
+        'Formulartitel wechselt automatisch zwischen "Hinzufügen" und "Bearbeiten"',
+      ],
+      en: [
+        'Unified form design across all pages: label left, field right (two-column)',
+        'Applies to: teams, employees, holidays, blocked periods, PI & sprints, confidence band, settings, roles & access',
+        'Form title automatically switches between "Add" and "Edit"',
+      ],
+    },
+  },
   {
     version: '1.2.0',
     date: '2026-08-21',

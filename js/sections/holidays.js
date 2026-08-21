@@ -6,21 +6,25 @@ export async function renderHolidays(container) {
   container.innerHTML = `
     <header><h1>${t('nav.holidays')}</h1></header>
     <div class="card">
-      <form id="hol-form" class="inline-form">
-        <div class="field">
+      <div class="form-panel-title">${t('common.add')}</div>
+      <form id="hol-form">
+        <div class="form-grid">
           <label>${t('holidays.date')}</label>
-          <input type="date" id="f-date" required>
-        </div>
-        <div class="field">
+          <input type="date" id="f-date" required class="narrow">
+
           <label>${t('holidays.name')}</label>
           <input type="text" id="f-name" required>
-        </div>
-        <div class="field">
+
           <label>${t('holidays.note')}</label>
           <input type="text" id="f-note">
         </div>
-        <button type="submit" class="btn btn-primary">${t('common.add')}</button>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">${t('common.add')}</button>
+        </div>
       </form>
+    </div>
+
+    <div class="card">
       <table>
         <thead><tr>
           <th>${t('holidays.date')}</th><th>${t('holidays.name')}</th><th>${t('holidays.note')}</th><th></th>

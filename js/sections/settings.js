@@ -5,20 +5,21 @@ export async function renderSettings(container) {
   container.innerHTML = `
     <header><h1>${t('settings.title')}</h1></header>
     <div class="card">
-      <div class="field">
+      <div class="form-panel-title">${t('settings.title')}</div>
+      <div class="form-grid">
         <label>${t('settings.rollingWindow')}</label>
-        <input type="number" id="f-window" min="1" step="1">
-      </div>
-      <div class="field">
+        <input type="number" id="f-window" min="1" step="1" class="narrow">
+
         <label>${t('settings.defaultSprintCount')}</label>
-        <input type="number" id="f-sprintcount" min="1" step="1">
-      </div>
-      <div class="field">
+        <input type="number" id="f-sprintcount" min="1" step="1" class="narrow">
+
         <label>${t('roles.blocked')} – Kontaktperson (Name, keine E-Mail)</label>
         <input type="text" id="f-blocked-contact">
       </div>
-      <button id="save-btn" class="btn btn-primary">${t('common.save')}</button>
-      <span id="save-msg" style="margin-left:0.75rem;color:var(--success);font-size:0.85rem;"></span>
+      <div class="form-actions" style="justify-content:flex-start;align-items:center;">
+        <button id="save-btn" class="btn btn-primary">${t('common.save')}</button>
+        <span id="save-msg" style="color:var(--success);font-size:0.85rem;"></span>
+      </div>
     </div>
   `;
 

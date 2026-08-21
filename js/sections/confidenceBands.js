@@ -9,21 +9,25 @@ export async function renderBands(container) {
       <p>${t('bands.subtitle')}</p>
     </header>
     <div class="card">
-      <form id="band-form" class="inline-form">
-        <div class="field">
+      <div class="form-panel-title">${t('common.save')}</div>
+      <form id="band-form">
+        <div class="form-grid">
           <label>${t('bands.position')}</label>
-          <input type="number" id="f-pos" min="1" required>
-        </div>
-        <div class="field">
+          <input type="number" id="f-pos" min="1" required class="narrow">
+
           <label>${t('bands.lower')}</label>
-          <input type="number" id="f-lower" min="0" max="1" step="0.01" required>
-        </div>
-        <div class="field">
+          <input type="number" id="f-lower" min="0" max="1" step="0.01" required class="narrow">
+
           <label>${t('bands.upper')}</label>
-          <input type="number" id="f-upper" min="0" max="1" step="0.01" required>
+          <input type="number" id="f-upper" min="0" max="1" step="0.01" required class="narrow">
         </div>
-        <button type="submit" class="btn btn-primary">${t('common.save')}</button>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">${t('common.save')}</button>
+        </div>
       </form>
+    </div>
+
+    <div class="card">
       <table>
         <thead><tr>
           <th>${t('bands.position')}</th><th class="num">${t('bands.lower')}</th><th class="num">${t('bands.upper')}</th><th></th>

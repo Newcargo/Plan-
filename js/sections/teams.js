@@ -6,21 +6,27 @@ export async function renderTeams(container) {
   container.innerHTML = `
     <header><h1>${t('nav.teams')}</h1></header>
     <div class="card">
-      <form id="team-form" class="inline-form">
-        <div class="field">
+      <div class="form-panel-title">${t('common.add')}</div>
+      <form id="team-form">
+        <div class="form-grid">
           <label>${t('teams.name')}</label>
           <input type="text" id="f-name" required>
-        </div>
-        <div class="field">
+
           <label>${t('teams.focus')}</label>
-          <input type="number" id="f-focus" min="0" max="1" step="0.01" value="0.8" required>
-        </div>
-        <div class="field">
+          <input type="number" id="f-focus" min="0" max="1" step="0.01" value="0.8" required class="narrow">
+          <div class="hint-row">${t('teams.focusHint')}</div>
+
           <label>${t('teams.buffer')}</label>
-          <input type="number" id="f-buffer" min="0" max="1" step="0.01" value="0" required>
+          <input type="number" id="f-buffer" min="0" max="1" step="0.01" value="0" required class="narrow">
+          <div class="hint-row">${t('teams.bufferHint')}</div>
         </div>
-        <button type="submit" class="btn btn-primary">${t('common.add')}</button>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">${t('common.add')}</button>
+        </div>
       </form>
+    </div>
+
+    <div class="card">
       <table>
         <thead><tr>
           <th>${t('teams.name')}</th>

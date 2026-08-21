@@ -12,23 +12,23 @@ export async function renderRoles(container) {
     </header>
 
     <div class="card">
-      <h2 style="margin-bottom:1rem;">${t('roles.addLoginTitle')}</h2>
-      <form id="create-login-form" class="inline-form">
-        <div class="field">
+      <div class="form-panel-title">${t('roles.addLoginTitle')}</div>
+      <form id="create-login-form">
+        <div class="form-grid">
           <label>${t('roles.employee')}</label>
           <select id="f-employee" required></select>
-        </div>
-        <div class="field">
+
           <label>${t('roles.email')}</label>
           <input type="email" id="f-email" required>
-        </div>
-        <div class="field">
+
           <label>${t('roles.defaultPassword')}</label>
           <input type="text" id="f-password" minlength="8" required>
+          <div class="hint-row">${t('roles.defaultPasswordHint')}</div>
         </div>
-        <button type="submit" class="btn btn-primary">${t('roles.createLogin')}</button>
+        <div class="form-actions" style="justify-content:flex-start;">
+          <button type="submit" class="btn btn-primary">${t('roles.createLogin')}</button>
+        </div>
       </form>
-      <p class="empty-state" style="padding-top:0;">${t('roles.defaultPasswordHint')}</p>
       <p id="create-login-msg" class="error-text" hidden></p>
     </div>
 

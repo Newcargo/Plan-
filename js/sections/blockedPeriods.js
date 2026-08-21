@@ -6,26 +6,29 @@ export async function renderBlocked(container) {
   container.innerHTML = `
     <header><h1>${t('nav.blocked')}</h1></header>
     <div class="card">
-      <form id="bp-form" class="inline-form">
-        <div class="field">
+      <div class="form-panel-title">${t('common.add')}</div>
+      <form id="bp-form">
+        <div class="form-grid">
           <label>${t('blocked.start')}</label>
-          <input type="date" id="f-start" required>
-        </div>
-        <div class="field">
+          <input type="date" id="f-start" required class="narrow">
+
           <label>${t('blocked.end')}</label>
-          <input type="date" id="f-end" required>
-        </div>
-        <div class="field">
+          <input type="date" id="f-end" required class="narrow">
+
           <label>${t('blocked.label')}</label>
           <input type="text" id="f-label" required>
-        </div>
-        <div class="field checkbox-field">
-          <input type="checkbox" id="f-impact" checked>
+
           <label>${t('blocked.capacityImpact')}</label>
+          <input type="checkbox" id="f-impact" checked>
+          <div class="hint-row">${t('blocked.capacityImpactHint')}</div>
         </div>
-        <button type="submit" class="btn btn-primary">${t('common.add')}</button>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">${t('common.add')}</button>
+        </div>
       </form>
-      <p class="empty-state" style="padding-top:0">${t('blocked.capacityImpactHint')}</p>
+    </div>
+
+    <div class="card">
       <table>
         <thead><tr>
           <th>${t('blocked.start')}</th><th>${t('blocked.end')}</th><th>${t('blocked.label')}</th><th>${t('blocked.capacityImpact')}</th><th></th>
