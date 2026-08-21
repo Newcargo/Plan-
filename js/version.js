@@ -6,9 +6,25 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.6.0';
+export const APP_VERSION = '1.7.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.7.0',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Rollen & Zugriff: neue Übersichtskarte "Was dürfen die Rollen?" mit vollständiger Beschreibung pro Rolle',
+        'Admin-Rolle zeigt automatisch "Beinhaltet auch: ..." für die Rollen, die sie mit abdeckt',
+        'Rollen-Beschreibungen zentral in js/roleDefinitions.js ausgelagert – eine Änderung dort aktualisiert Tooltip und Übersichtskarte gleichzeitig',
+      ],
+      en: [
+        'Roles & access: new overview card "What can each role do?" with a full description per role',
+        'Admin role automatically shows "Also includes: ..." for the roles it covers',
+        'Role descriptions centralized in js/roleDefinitions.js – one change there updates both the tooltip and the overview card',
+      ],
+    },
+  },
   {
     version: '1.6.0',
     date: '2026-08-21',

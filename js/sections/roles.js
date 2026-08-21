@@ -2,15 +2,7 @@ import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
 import { ICON_KEY, iconButton, fieldLabel } from '../icons.js';
 import { createSortState, sortableHeader, wireSortHeaders, sortArray } from '../sortable.js';
-
-const ALL_ROLES = ['mitarbeiter', 'stufe2_genehmiger', 'people_pool_manager', 'admin'];
-
-const ROLE_TOOLTIPS = {
-  mitarbeiter: 'Kann eigene Urlaubsanträge stellen und den Status einsehen.',
-  stufe2_genehmiger: 'Kann Urlaubsanträge der Projektleitung genehmigen oder ablehnen (Stufe 2).',
-  people_pool_manager: 'Wird bei externen Kollegen ohne Fiori-SAP über den Genehmigungsprozess informiert.',
-  admin: 'Voller Zugriff auf alle Admin-Funktionen: Stammdaten, Rollen, Einstellungen.',
-};
+import { ROLE_DEFINITIONS, ALL_ROLE_KEYS as ALL_ROLES, getIncludedLabels } from '../roleDefinitions.js';
 
 export async function renderRoles(container) {
   const sortState = createSortState('full_name', true);
@@ -23,6 +15,24 @@ export async function renderRoles(container) {
       <h1>${t('roles.title')}</h1>
       <p>${t('roles.subtitle')}</p>
     </header>
+
+    <div class="card">
+      <div class="form-panel-title">Was dürfen die Rollen?</div>
+      <p class="empty-state" style="padding-top:0;">Hinweis: Die Stammdaten-Rechte (Teams, Mitarbeiter, Feiertage usw.) für Admin sind bereits aktiv. Die feineren Unterschiede zwischen Stufe-2-Genehmiger und People Pool Manager greifen vollständig, sobald der Urlaubskalender selbst gebaut ist.</p>
+      <div style="display:flex; flex-direction:column; gap:0.9rem;">
+        ${ALL_ROLES.map(r => {
+          const def = ROLE_DEFINITIONS[r];
+          const included = getIncludedLabels(r);
+          return `
+            <div style="border:1px solid var(--border); border-radius:8px; padding:0.85rem 1rem;">
+              <div style="font-weight:600; font-size:0.9rem; color:var(--text); margin-bottom:0.3rem;">${escapeHtml(def.label)}</div>
+              <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">${escapeHtml(def.description)}</div>
+              ${included.length ? `<div style="font-size:0.8rem; color:var(--accent); margin-top:0.5rem;">Beinhaltet auch: ${included.map(escapeHtml).join(', ')}</div>` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
 
     <div class="card">
       <div class="form-panel-title">${t('roles.addLoginTitle')}</div>
@@ -163,7 +173,7 @@ export async function renderRoles(container) {
           ` : ''}
           <div class="role-detail-checks">
             ${ALL_ROLES.map(r => `
-              <label title="${escapeHtml(ROLE_TOOLTIPS[r])}">
+              <label title="${escapeHtml(ROLE_DEFINITIONS[r].description)}">
                 <input type="checkbox" class="role-checkbox" data-role="${r}" ${roles.has(r) ? 'checked' : ''}>
                 ${t('roles.' + r)}
               </label>
