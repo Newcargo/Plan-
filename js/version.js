@@ -6,9 +6,23 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.9.0';
+export const APP_VERSION = '1.9.1';
 
 export const CHANGELOG = [
+  {
+    version: '1.9.1',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Fehlerbehebung: Urlaubsantrag stellen scheiterte an einer Fremdschlüssel-Verletzung ("leave_status_history_changed_by_fkey")',
+        'Ursache: Der Statusänderungs-Trigger nutzte noch die alte Login-ID (auth.uid()) statt der employees-ID – Datenbank-only-Fix, kein Datei-Update nötig',
+      ],
+      en: [
+        'Bug fix: submitting a leave request failed with a foreign key violation ("leave_status_history_changed_by_fkey")',
+        'Cause: the status-change trigger still used the old login ID (auth.uid()) instead of the employees ID – database-only fix, no file update needed',
+      ],
+    },
+  },
   {
     version: '1.9.0',
     date: '2026-08-21',
