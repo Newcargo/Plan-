@@ -9,6 +9,23 @@ export const ICON_KEY = `<svg width="15" height="15" viewBox="0 0 24 24" fill="n
 
 export const ICON_LOCK = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
 
+function escapeAttr(str) {
+  return String(str).replace(/[&<>"']/g, s => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[s]));
+}
+
+// Info-Icon mit Tooltip. Direkt neben ein Label setzen, um zu erklaeren, was das Feld bewirkt.
+// Nutzung: `${fieldLabel(t('teams.name'), 'Erklaerungstext')}` anstelle von `<label>${t('teams.name')}</label>`
+export function infoIcon(tooltip) {
+  const safe = escapeAttr(tooltip);
+  return `<span class="info-icon" tabindex="0" role="button" aria-label="Info: ${safe}">i<span class="tooltip-bubble" role="tooltip">${safe}</span></span>`;
+}
+
+export function fieldLabel(text, tooltip) {
+  return `<label class="field-label">${text}${tooltip ? infoIcon(tooltip) : ''}</label>`;
+}
+
 export function iconButton(icon, label, extraClass = '') {
   return `<button type="button" class="icon-btn ${extraClass}" title="${label}" aria-label="${label}">${icon}</button>`;
 }

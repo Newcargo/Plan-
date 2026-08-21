@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
-import { ICON_EDIT, ICON_DELETE, iconButton } from '../icons.js';
+import { ICON_EDIT, ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
 
 export async function renderTeams(container) {
   container.innerHTML = `
@@ -12,13 +12,11 @@ export async function renderTeams(container) {
           <label>${t('teams.name')}</label>
           <input type="text" id="f-name" required>
 
-          <label>${t('teams.focus')}</label>
+          ${fieldLabel(t('teams.focus'), 'Anteil der Arbeitszeit für Story-Point-Arbeit nach Abzug von Zeremonien/Meetings, als Team-Standard (0–1). Kann pro Mitarbeiter überschrieben werden.')}
           <input type="number" id="f-focus" min="0" max="1" step="0.01" value="0.8" required class="narrow">
-          <div class="hint-row">${t('teams.focusHint')}</div>
 
-          <label>${t('teams.buffer')}</label>
+          ${fieldLabel(t('teams.buffer'), 'Anteil der Kapazität, der für ungeplante Arbeit reserviert wird, z. B. Betrieb (0–1). Wird von der Kapazität abgezogen: effektiv = Fokusfaktor × (1 − Puffer).')}
           <input type="number" id="f-buffer" min="0" max="1" step="0.01" value="0" required class="narrow">
-          <div class="hint-row">${t('teams.bufferHint')}</div>
         </div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">${t('common.add')}</button>

@@ -1,5 +1,6 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
+import { fieldLabel } from '../icons.js';
 
 export async function renderSettings(container) {
   container.innerHTML = `
@@ -7,13 +8,13 @@ export async function renderSettings(container) {
     <div class="card">
       <div class="form-panel-title">${t('settings.title')}</div>
       <div class="form-grid">
-        <label>${t('settings.rollingWindow')}</label>
+        ${fieldLabel(t('settings.rollingWindow'), 'Anzahl der letzten abgeschlossenen Sprints, aus denen der SP/PT-Durchschnitt (Velocity) für die Prognose berechnet wird.')}
         <input type="number" id="f-window" min="1" step="1" class="narrow">
 
-        <label>${t('settings.defaultSprintCount')}</label>
+        ${fieldLabel(t('settings.defaultSprintCount'), 'Standardwert für die Anzahl Sprints bei einer neuen PI, z. B. 5.')}
         <input type="number" id="f-sprintcount" min="1" step="1" class="narrow">
 
-        <label>${t('roles.blocked')} – Kontaktperson (Name, keine E-Mail)</label>
+        ${fieldLabel(t('roles.blocked') + ' – Kontaktperson (Name, keine E-Mail)', 'Name, der gesperrten Mitarbeitenden beim Login-Versuch angezeigt wird, an wen sie sich wenden sollen. Bewusst nur ein Name, keine E-Mail-Adresse.')}
         <input type="text" id="f-blocked-contact">
       </div>
       <div class="form-actions" style="justify-content:flex-start;align-items:center;">

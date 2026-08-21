@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
-import { ICON_EDIT, ICON_DELETE, iconButton } from '../icons.js';
+import { ICON_EDIT, ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
 
 export async function renderSprints(container) {
   container.innerHTML = `
@@ -10,7 +10,7 @@ export async function renderSprints(container) {
       <div class="form-panel-title">${t('sprints.addPi')}</div>
       <form id="pi-form">
         <div class="form-grid">
-          <label>${t('sprints.piName')}</label>
+          ${fieldLabel(t('sprints.piName'), 'Name des Program Increments, frei wählbar und jederzeit im Nachhinein änderbar.')}
           <input type="text" id="f-pi-name" placeholder="PI 2026.2" required>
         </div>
         <div class="form-actions">
@@ -33,13 +33,13 @@ export async function renderSprints(container) {
       <form id="sprint-form">
         <input type="hidden" id="f-sprint-id">
         <div class="form-grid">
-          <label>${t('sprints.sprintNr')}</label>
+          ${fieldLabel(t('sprints.sprintNr'), 'Fortlaufende Position des Sprints innerhalb der PI (1, 2, 3, ...). Bestimmt z. B. die Zuordnung zum Konfidenzband und bleibt beim Umbenennen des Namens unverändert.')}
           <input type="number" id="f-sprint-nr" min="1" required class="narrow">
 
-          <label>${t('common.name')}</label>
+          ${fieldLabel(t('common.name'), 'Frei wählbarer Anzeigename des Sprints, unabhängig von der Sprint-Position. Kann jederzeit geändert werden, ohne Verknüpfungen zu brechen.')}
           <input type="text" id="f-sprint-name" placeholder="Sprint 1">
 
-          <label>${t('sprints.start')}</label>
+          ${fieldLabel(t('sprints.start'), 'Sprint-Startdatum. Bestimmt zusammen mit dem Enddatum die verfügbaren Arbeitstage für die Kapazitätsberechnung.')}
           <input type="date" id="f-sprint-start" required class="narrow">
 
           <label>${t('sprints.end')}</label>

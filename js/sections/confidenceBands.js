@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
-import { ICON_EDIT, ICON_DELETE, iconButton } from '../icons.js';
+import { ICON_EDIT, ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
 
 export async function renderBands(container) {
   container.innerHTML = `
@@ -12,13 +12,13 @@ export async function renderBands(container) {
       <div class="form-panel-title">${t('common.save')}</div>
       <form id="band-form">
         <div class="form-grid">
-          <label>${t('bands.position')}</label>
+          ${fieldLabel(t('bands.position'), 'Position des Sprints innerhalb der PI (1 = direkt nach PI Planning). Muss mit der Sprint-Position bei "PI & Sprints" übereinstimmen.')}
           <input type="number" id="f-pos" min="1" required class="narrow">
 
-          <label>${t('bands.lower')}</label>
+          ${fieldLabel(t('bands.lower'), 'Wie viel Prozent der berechneten Kapazität mindestens erwartet wird. Je weiter der Sprint vom PI Planning entfernt ist, desto grösser meist die Unsicherheit.')}
           <input type="number" id="f-lower" min="0" max="1" step="0.01" required class="narrow">
 
-          <label>${t('bands.upper')}</label>
+          ${fieldLabel(t('bands.upper'), 'Wie viel Prozent der berechneten Kapazität höchstens erwartet wird, meist 100%.')}
           <input type="number" id="f-upper" min="0" max="1" step="0.01" required class="narrow">
         </div>
         <div class="form-actions">

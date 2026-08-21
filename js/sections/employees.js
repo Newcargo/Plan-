@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
-import { ICON_EDIT, ICON_DELETE, iconButton } from '../icons.js';
+import { ICON_EDIT, ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
 
 export async function renderEmployees(container) {
   container.innerHTML = `
@@ -13,27 +13,26 @@ export async function renderEmployees(container) {
           <label>${t('employees.fullName')}</label>
           <input type="text" id="f-name" required>
 
-          <label>${t('employees.team')}</label>
+          ${fieldLabel(t('employees.team'), 'Team-Zuordnung bestimmt den Standard-Fokusfaktor und Team-Puffer für die Kapazitätsberechnung dieser Person.')}
           <select id="f-team"></select>
 
-          <label>${t('employees.employmentPct')}</label>
+          ${fieldLabel(t('employees.employmentPct'), 'Beschäftigungsgrad (0–1), z. B. 0.8 für 80%. Fliesst direkt in die Kapazitätsberechnung ein.')}
           <input type="number" id="f-pensum" min="0" max="1" step="0.01" value="1.00" required class="narrow">
 
           <div class="divider"></div>
 
-          <label>${t('employees.focusOverride')}</label>
+          ${fieldLabel(t('employees.focusOverride'), 'Überschreibt den Team-Fokusfaktor nur für diese Person. Leer lassen, um den Team-Standard zu verwenden.')}
           <input type="number" id="f-focus-override" min="0" max="1" step="0.01">
-          <div class="hint-row">${t('employees.focusOverrideHint')}</div>
 
-          <label>${t('employees.individualFactor')}</label>
+          ${fieldLabel(t('employees.individualFactor'), 'Zusätzlicher persönlicher Reduktionsfaktor (0–1), z. B. bei Sonderaufgaben. Multipliziert sich mit dem Fokusfaktor.')}
           <input type="number" id="f-indiv-factor" min="0" max="1" step="0.01">
 
-          <label>${t('employees.individualNote')}</label>
+          ${fieldLabel(t('employees.individualNote'), 'Pflichtfeld, sobald ein individueller Zusatzfaktor gesetzt ist – dokumentiert nachvollziehbar, warum.')}
           <input type="text" id="f-indiv-note">
 
           <div class="divider"></div>
 
-          <label>${t('employees.isExternal')}</label>
+          ${fieldLabel(t('employees.isExternal'), 'Mitarbeiter ohne Fiori-SAP-Zugang. Ihr Urlaub-Genehmigungsprozess läuft über den People Pool Manager statt über Fiori-SAP.')}
           <input type="checkbox" id="f-external">
         </div>
         <div class="form-actions">

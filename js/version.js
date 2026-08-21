@@ -6,9 +6,25 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.3.0';
+export const APP_VERSION = '1.4.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.4.0',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Info-Icons neben Feldern hinzugefügt, die bei Hover/Fokus erklären, was das jeweilige Feld bewirkt',
+        'Betrifft: Teams, Mitarbeiter, Feiertage, Sperrzeiten, PI & Sprints, Konfidenzband, Einstellungen, Rollen & Zugriff (inkl. Rollen-Spaltenköpfe)',
+        'Wiederverwendbare Komponente (fieldLabel/infoIcon), damit künftige Felder das Muster einfach übernehmen können',
+      ],
+      en: [
+        'Added info icons next to fields that explain what the field does on hover/focus',
+        'Applies to: teams, employees, holidays, blocked periods, PI & sprints, confidence band, settings, roles & access (incl. role column headers)',
+        'Reusable component (fieldLabel/infoIcon) so future fields can adopt the pattern easily',
+      ],
+    },
+  },
   {
     version: '1.3.0',
     date: '2026-08-21',

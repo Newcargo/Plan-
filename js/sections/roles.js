@@ -1,8 +1,15 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
-import { ICON_KEY, iconButton } from '../icons.js';
+import { ICON_KEY, iconButton, fieldLabel } from '../icons.js';
 
 const ALL_ROLES = ['mitarbeiter', 'stufe2_genehmiger', 'people_pool_manager', 'admin'];
+
+const ROLE_TOOLTIPS = {
+  mitarbeiter: 'Kann eigene Urlaubsanträge stellen und den Status einsehen.',
+  stufe2_genehmiger: 'Kann Urlaubsanträge der Projektleitung genehmigen oder ablehnen (Stufe 2).',
+  people_pool_manager: 'Wird bei externen Kollegen ohne Fiori-SAP über den Genehmigungsprozess informiert.',
+  admin: 'Voller Zugriff auf alle Admin-Funktionen: Stammdaten, Rollen, Einstellungen.',
+};
 
 export async function renderRoles(container) {
   container.innerHTML = `
@@ -15,15 +22,14 @@ export async function renderRoles(container) {
       <div class="form-panel-title">${t('roles.addLoginTitle')}</div>
       <form id="create-login-form">
         <div class="form-grid">
-          <label>${t('roles.employee')}</label>
+          ${fieldLabel(t('roles.employee'), 'Nur Mitarbeiter ohne bestehenden App-Zugang werden hier angezeigt.')}
           <select id="f-employee" required></select>
 
-          <label>${t('roles.email')}</label>
+          ${fieldLabel(t('roles.email'), 'Login-E-Mail-Adresse. Wird mit dem Supabase-Auth-Account verknüpft und ist danach die Anmelde-Adresse.')}
           <input type="email" id="f-email" required>
 
-          <label>${t('roles.defaultPassword')}</label>
+          ${fieldLabel(t('roles.defaultPassword'), t('roles.defaultPasswordHint'))}
           <input type="text" id="f-password" minlength="8" required>
-          <div class="hint-row">${t('roles.defaultPasswordHint')}</div>
         </div>
         <div class="form-actions" style="justify-content:flex-start;">
           <button type="submit" class="btn btn-primary">${t('roles.createLogin')}</button>
@@ -37,13 +43,12 @@ export async function renderRoles(container) {
         <thead><tr>
           <th>${t('employees.fullName')}</th>
           <th>${t('employees.hasLogin')}</th>
-          ${ALL_ROLES.map(r => `<th>${t('roles.' + r)}</th>`).join('')}
-          <th>${t('roles.blocked')}</th>
+          ${ALL_ROLES.map(r => `<th>${fieldLabel(t('roles.' + r), ROLE_TOOLTIPS[r])}</th>`).join('')}
+          <th>${fieldLabel(t('roles.blocked'), t('roles.blockedHint'))}</th>
           <th></th>
         </tr></thead>
         <tbody id="roles-tbody"><tr><td colspan="${3 + ALL_ROLES.length}" class="empty-state">${t('common.loading')}</td></tr></tbody>
       </table>
-      <p class="empty-state" style="padding-top:0.75rem;">${t('roles.blockedHint')}</p>
     </div>
   `;
 

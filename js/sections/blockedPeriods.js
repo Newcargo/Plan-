@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
-import { ICON_DELETE, iconButton } from '../icons.js';
+import { ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
 
 export async function renderBlocked(container) {
   container.innerHTML = `
@@ -15,12 +15,11 @@ export async function renderBlocked(container) {
           <label>${t('blocked.end')}</label>
           <input type="date" id="f-end" required class="narrow">
 
-          <label>${t('blocked.label')}</label>
+          ${fieldLabel(t('blocked.label'), 'Grund der Sperrzeit, z. B. "Betriebsferien" oder "Wartungsfenster".')}
           <input type="text" id="f-label" required>
 
-          <label>${t('blocked.capacityImpact')}</label>
+          ${fieldLabel(t('blocked.capacityImpact'), 'Aktiv: wirkt wie eine Firmenschliessung und wird von der verfügbaren Kapazität abgezogen. Inaktiv: dient nur als Genehmigungshinweis im Urlaubskalender, ohne die Kapazität zu verändern.')}
           <input type="checkbox" id="f-impact" checked>
-          <div class="hint-row">${t('blocked.capacityImpactHint')}</div>
         </div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">${t('common.add')}</button>

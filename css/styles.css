@@ -239,6 +239,29 @@ tr:last-child td { border-bottom: none; }
 /* Versionsnummer in der Sidebar */
 .sidebar-version { color: var(--text-muted); font-size: 0.7rem; text-align: center; padding: 0.25rem 0; }
 
+/* Info-Icon mit Tooltip neben Feld-Labels */
+.field-label { display: inline-flex; align-items: center; gap: 0.4rem; }
+th .field-label { display: inline-flex; }
+.info-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: var(--border); color: var(--text-muted);
+  font-family: Georgia, serif; font-style: italic; font-size: 10px; font-weight: 700;
+  cursor: help; position: relative; flex-shrink: 0;
+}
+.info-icon:hover, .info-icon:focus-visible { background: var(--accent); color: #fff; outline: none; }
+.info-icon .tooltip-bubble {
+  visibility: hidden; opacity: 0;
+  position: absolute; bottom: 135%; left: 50%; transform: translateX(-50%);
+  background: var(--sidebar-bg); color: #fff;
+  font-family: var(--font-body); font-style: normal; font-weight: 400; font-size: 0.75rem; line-height: 1.4;
+  padding: 0.5rem 0.65rem; border-radius: 6px; width: 220px;
+  z-index: 50; transition: opacity 0.1s ease; pointer-events: none;
+  text-transform: none; letter-spacing: normal;
+}
+.info-icon:hover .tooltip-bubble, .info-icon:focus-visible .tooltip-bubble { visibility: visible; opacity: 1; }
+th .info-icon .tooltip-bubble { bottom: auto; top: 135%; }
+
 /* Vergangene Feiertage/Sperrzeiten grau darstellen */
 .row-past td { color: var(--text-muted); }
 .row-past .badge { opacity: 0.6; }

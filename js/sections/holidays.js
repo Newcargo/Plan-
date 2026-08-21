@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient.js';
 import { t } from '../i18n.js';
-import { ICON_DELETE, iconButton } from '../icons.js';
+import { ICON_DELETE, iconButton, fieldLabel } from '../icons.js';
 
 export async function renderHolidays(container) {
   container.innerHTML = `
@@ -9,13 +9,13 @@ export async function renderHolidays(container) {
       <div class="form-panel-title">${t('common.add')}</div>
       <form id="hol-form">
         <div class="form-grid">
-          <label>${t('holidays.date')}</label>
+          ${fieldLabel(t('holidays.date'), 'Datum des Feiertags. Wird bei der Kapazitätsberechnung automatisch als Nicht-Arbeitstag berücksichtigt.')}
           <input type="date" id="f-date" required class="narrow">
 
           <label>${t('holidays.name')}</label>
           <input type="text" id="f-name" required>
 
-          <label>${t('holidays.note')}</label>
+          ${fieldLabel(t('holidays.note'), 'Optionale Zusatzinfo, z. B. "Fällt auf einen Samstag".')}
           <input type="text" id="f-note">
         </div>
         <div class="form-actions">
