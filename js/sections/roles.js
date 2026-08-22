@@ -4,6 +4,31 @@ import { ICON_KEY, iconButton, fieldLabel } from '../icons.js';
 import { createSortState, sortableHeader, wireSortHeaders, sortArray } from '../sortable.js';
 import { ROLE_DEFINITIONS, ALL_ROLE_KEYS as ALL_ROLES, getIncludedLabels } from '../roleDefinitions.js';
 
+// Ruft die admin-users Edge Function auf und liest bei einem Fehler die echte Meldung
+// aus dem Response-Body ("error"-Feld), statt der generischen supabase-js-Meldung
+// ("Edge Function returned a non-2xx status code").
+async function invokeAdminUsers(body) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const { data, error } = await supabase.functions.invoke('admin-users', {
+    body,
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  });
+
+  if (error) {
+    let message = error.message;
+    try {
+      if (error.context && typeof error.context.json === 'function') {
+        const body = await error.context.json();
+        if (body && body.error) message = body.error;
+      }
+    } catch (_) { /* Fallback bleibt die generische Meldung */ }
+    return { data: null, error: message };
+  }
+
+  if (data && data.error) return { data, error: data.error };
+  return { data, error: null };
+}
+
 export async function renderRoles(container) {
   const sortState = createSortState('full_name', true);
   let rolesData = [];
@@ -84,14 +109,10 @@ export async function renderRoles(container) {
 
     if (!employee_id) return;
 
-    const { data: { session } } = await supabase.auth.getSession();
-    const { data, error } = await supabase.functions.invoke('admin-users', {
-      body: { action: 'create_login', employee_id, email, password },
-      headers: { Authorization: `Bearer ${session.access_token}` },
-    });
+    const { data, error } = await invokeAdminUsers({ action: 'create_login', employee_id, email, password });
 
-    if (error || (data && data.error)) {
-      msg.textContent = (data && data.error) || error.message || t('common.error');
+    if (error) {
+      msg.textContent = error;
       msg.hidden = false;
       return;
     }
@@ -241,14 +262,10 @@ export async function renderRoles(container) {
           if (newPassword.length < 8) { alert(t('roles.defaultPasswordHint')); return; }
 
           const emp = rolesData.find(x => x.id === employeeId);
-          const { data: { session } } = await supabase.auth.getSession();
-          const { data, error } = await supabase.functions.invoke('admin-users', {
-            body: { action: 'reset_password', auth_user_id: emp.auth_user_id, password: newPassword },
-            headers: { Authorization: `Bearer ${session.access_token}` },
-          });
+          const { error } = await invokeAdminUsers({ action: 'reset_password', auth_user_id: emp.auth_user_id, password: newPassword });
 
-          if (error || (data && data.error)) {
-            alert((data && data.error) || error.message || t('common.error'));
+          if (error) {
+            alert(error);
             return;
           }
           alert(t('common.saved'));
@@ -265,14 +282,10 @@ export async function renderRoles(container) {
           const emp = rolesData.find(x => x.id === employeeId);
           if (!newEmail || newEmail === emp.email) return;
 
-          const { data: { session } } = await supabase.auth.getSession();
-          const { data, error } = await supabase.functions.invoke('admin-users', {
-            body: { action: 'update_email', employee_id: employeeId, auth_user_id: emp.auth_user_id, email: newEmail },
-            headers: { Authorization: `Bearer ${session.access_token}` },
-          });
+          const { error } = await invokeAdminUsers({ action: 'update_email', employee_id: employeeId, auth_user_id: emp.auth_user_id, email: newEmail });
 
-          if (error || (data && data.error)) {
-            alert((data && data.error) || error.message || t('common.error'));
+          if (error) {
+            alert(error);
             return;
           }
           emp.email = newEmail;

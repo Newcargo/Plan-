@@ -51,7 +51,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 
 /* [hidden] muss Vorrang vor den eigenen display:flex-Regeln haben, sonst bleibt
    z.B. die Login-Seite trotz hidden=true sichtbar. */
-.login-screen[hidden], .app-shell[hidden] { display: none !important; }
+.login-screen[hidden], .app-shell[hidden], .nav-item[hidden] { display: none !important; }
 
 /* ---------- Login ---------- */
 .login-screen {
@@ -124,9 +124,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   padding: 0 0.5rem;
 }
 .nav-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  display: flex; align-items: center; gap: 0.6rem;
   padding: 0.55rem 0.6rem;
   border-radius: var(--radius-sm);
   color: var(--sidebar-text);
@@ -288,3 +286,8 @@ th.sortable.sort-active .sort-arrow { opacity: 1; color: var(--accent); }
 /* Vergangene Feiertage/Sperrzeiten grau darstellen */
 .row-past td { color: var(--text-muted); }
 .row-past .badge { opacity: 0.6; }
+
+/* Globale Absicherung: [hidden] gewinnt IMMER, unabhaengig davon, welche eigene
+   display-Regel ein Element sonst hat. Verhindert diesen Bug-Typ dauerhaft,
+   auch fuer alle kuenftig neu hinzugefuegten Elemente. */
+[hidden] { display: none !important; }

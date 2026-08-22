@@ -6,9 +6,25 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.10.0';
+export const APP_VERSION = '1.10.1';
 
 export const CHANGELOG = [
+  {
+    version: '1.10.1',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Fehlerbehebung: Nicht-Admin-Nutzer sahen alle Navigationspunkte (inkl. Admin-Bereiche) – derselbe CSS-Bug-Typ wie beim allerersten Mal (eigene display-Regel überschrieb das hidden-Attribut), diesmal bei .nav-item statt bei der Login-Seite',
+        'Globale CSS-Absicherung ergänzt, die diesen Fehlertyp dauerhaft für alle aktuellen und künftigen Elemente ausschliesst',
+        'Fehlerbehebung: Beim Login-Erstellen/Passwort-Reset/E-Mail-Ändern erschien die kryptische Meldung "Edge Function returned a non-2xx status code" statt der eigentlichen Fehlermeldung (z. B. "Nur Admin darf Logins verwalten") – Frontend liest jetzt den echten Fehlertext korrekt aus',
+      ],
+      en: [
+        'Bug fix: non-admin users could see every nav item (including admin areas) – same CSS bug class as the very first one (an element\'s own display rule overrode the hidden attribute), this time on .nav-item instead of the login screen',
+        'Added a global CSS safeguard that permanently rules out this bug type for all current and future elements',
+        'Bug fix: creating a login / resetting a password / changing an email showed the cryptic "Edge Function returned a non-2xx status code" instead of the actual error (e.g. "Only Admin may manage logins") – the frontend now correctly reads the real error text',
+      ],
+    },
+  },
   {
     version: '1.10.0',
     date: '2026-08-21',
