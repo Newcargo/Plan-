@@ -141,6 +141,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
 .nav-item.active { background: var(--accent); color: #fff; }
 .sidebar-footer { margin-top: auto; display: flex; flex-direction: column; gap: 0.5rem; }
+.sidebar-user { padding: 0.6rem 0.5rem; border-top: 1px solid rgba(255,255,255,0.1); }
+.sidebar-user .sidebar-user-name { color: #fff; font-weight: 600; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar-user .sidebar-user-role { color: var(--sidebar-text); font-size: 0.72rem; margin-top: 0.15rem; }
 .lang-toggle { display: flex; gap: 0.35rem; }
 .lang-btn {
   flex: 1; padding: 0.35rem; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.15);

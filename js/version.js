@@ -6,9 +6,21 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.10.1';
+export const APP_VERSION = '1.11.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.11.0',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Angemeldeter Name + aktuelle Rolle(n) werden jetzt unten in der Seitenleiste angezeigt, auf jeder Seite sichtbar',
+      ],
+      en: [
+        'Signed-in name + current role(s) are now shown at the bottom of the sidebar, visible on every page',
+      ],
+    },
+  },
   {
     version: '1.10.1',
     date: '2026-08-21',

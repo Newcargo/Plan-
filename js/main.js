@@ -15,6 +15,7 @@ import { renderChangelog } from './sections/changelog.js';
 import { renderMyLeave } from './sections/myLeave.js';
 import { renderApprovals } from './sections/approvals.js';
 import { APP_VERSION } from './version.js';
+import { ROLE_DEFINITIONS, ALL_ROLE_KEYS } from './roleDefinitions.js';
 
 const routes = {
   dashboard: renderDashboard,
@@ -79,6 +80,7 @@ function setupNav() {
     btn.addEventListener('click', () => {
       setLang(btn.dataset.lang);
       document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === btn.dataset.lang));
+      renderSidebarUser();
       const active = document.querySelector('.nav-item.active');
       navigate(active ? active.dataset.route : defaultRoute());
     });
@@ -103,7 +105,27 @@ async function showApp() {
   applyRoleVisibility();
   applyTranslations();
   document.getElementById('sidebar-version').textContent = 'v' + APP_VERSION;
+  renderSidebarUser();
   await navigate(defaultRoute());
+}
+
+function renderSidebarUser() {
+  const el = document.getElementById('sidebar-user');
+  if (!currentEmployee) { el.innerHTML = ''; return; }
+
+  const roleLabels = ALL_ROLE_KEYS.filter(r => currentRoles.has(r)).map(r => ROLE_DEFINITIONS[r].label);
+  const roleText = roleLabels.length ? roleLabels.join(', ') : t('roles.mitarbeiter');
+
+  el.innerHTML = `
+    <div class="sidebar-user-name">${escapeHtml(currentEmployee.full_name)}</div>
+    <div class="sidebar-user-role">${escapeHtml(roleText)}</div>
+  `;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, s => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[s]));
 }
 
 document.getElementById('login-form').addEventListener('submit', async e => {
