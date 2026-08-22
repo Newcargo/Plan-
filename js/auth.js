@@ -10,7 +10,7 @@ export async function checkAccess() {
 
   const { data: employee, error: empErr } = await supabase
     .from('employees')
-    .select('id, full_name, email, auth_user_id, is_blocked')
+    .select('id, full_name, email, auth_user_id, is_blocked, must_change_password')
     .eq('auth_user_id', user.id)
     .maybeSingle();
 

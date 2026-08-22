@@ -18,6 +18,9 @@ export async function renderEmployees(container) {
           ${fieldLabel(t('employees.team'), 'Team-Zuordnung bestimmt den Standard-Fokusfaktor und Team-Puffer für die Kapazitätsberechnung dieser Person.')}
           <select id="f-team"></select>
 
+          ${fieldLabel(t('employees.jobDescription'), 'Funktionsbezeichnung, wird unter Einstellungen als Liste verwaltet.')}
+          <select id="f-jobdesc"><option value="">–</option></select>
+
           ${fieldLabel(t('employees.employmentPct'), 'Beschäftigungsgrad (0–1), z. B. 0.8 für 80%. Fliesst direkt in die Kapazitätsberechnung ein.')}
           <input type="number" id="f-pensum" min="0" max="1" step="0.01" value="1.00" required class="narrow">
 
@@ -49,22 +52,28 @@ export async function renderEmployees(container) {
         <thead><tr id="emp-thead-row">
           ${sortableHeader(t('employees.fullName'), 'full_name', sortState)}
           ${sortableHeader(t('employees.team'), 'team_name', sortState)}
+          <th>${t('employees.jobDescription')}</th>
           <th class="num">${t('employees.employmentPct')}</th>
           <th class="num">${t('employees.effective')}</th>
           <th>${t('employees.hasLogin')}</th>
           <th></th>
         </tr></thead>
-        <tbody id="emp-tbody"><tr><td colspan="6" class="empty-state">${t('common.loading')}</td></tr></tbody>
+        <tbody id="emp-tbody"><tr><td colspan="7" class="empty-state">${t('common.loading')}</td></tr></tbody>
       </table>
     </div>
   `;
 
   let teams = [];
   const teamSelect = document.getElementById('f-team');
+  const jobDescSelect = document.getElementById('f-jobdesc');
 
   const { data: teamData } = await supabase.from('teams').select('id, name').order('name');
   teams = teamData || [];
   teamSelect.innerHTML = teams.map(tm => `<option value="${tm.id}">${escapeHtml(tm.name)}</option>`).join('');
+
+  const { data: jdData } = await supabase.from('job_descriptions').select('id, name').order('name');
+  const jobDescriptions = jdData || [];
+  jobDescSelect.innerHTML = '<option value="">–</option>' + jobDescriptions.map(jd => `<option value="${jd.id}">${escapeHtml(jd.name)}</option>`).join('');
 
   const form = document.getElementById('emp-form');
   const cancelBtn = document.getElementById('emp-cancel-btn');
@@ -95,6 +104,7 @@ export async function renderEmployees(container) {
     const payload = {
       full_name: document.getElementById('f-name').value.trim(),
       team_id: teamSelect.value || null,
+      job_description_id: jobDescSelect.value || null,
       employment_pct: document.getElementById('f-pensum').value,
       focus_factor_override: document.getElementById('f-focus-override').value || null,
       individual_factor: indivFactor || null,
@@ -115,12 +125,14 @@ export async function renderEmployees(container) {
   let empsData = [];
   let reductionMap = new Map();
   const teamMap = new Map(teams.map(tm => [tm.id, tm.name]));
+  const jobDescMap = new Map(jobDescriptions.map(jd => [jd.id, jd.name]));
 
   function wireHead() {
     const row = document.getElementById('emp-thead-row');
     row.innerHTML = `
       ${sortableHeader(t('employees.fullName'), 'full_name', sortState)}
       ${sortableHeader(t('employees.team'), 'team_name', sortState)}
+      <th>${t('employees.jobDescription')}</th>
       <th class="num">${t('employees.employmentPct')}</th>
       <th class="num">${t('employees.effective')}</th>
       <th>${t('employees.hasLogin')}</th>
@@ -134,9 +146,9 @@ export async function renderEmployees(container) {
     const tbody = document.getElementById('emp-tbody');
     const { data: emps, error } = await supabase
       .from('employees')
-      .select('id, full_name, team_id, employment_pct, focus_factor_override, individual_factor, individual_factor_note, is_external, auth_user_id');
+      .select('id, full_name, team_id, job_description_id, employment_pct, focus_factor_override, individual_factor, individual_factor_note, is_external, auth_user_id');
 
-    if (error) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${t('common.error')}</td></tr>`; return; }
+    if (error) { tbody.innerHTML = `<tr><td colspan="7" class="empty-state">${t('common.error')}</td></tr>`; return; }
 
     const { data: reductions } = await supabase.from('v_employee_reduction').select('employee_id, effective_reduction_pct');
     reductionMap = new Map((reductions || []).map(r => [r.employee_id, r.effective_reduction_pct]));
@@ -147,7 +159,7 @@ export async function renderEmployees(container) {
 
   function renderRows() {
     const tbody = document.getElementById('emp-tbody');
-    if (!empsData.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${t('common.none')}</td></tr>`; return; }
+    if (!empsData.length) { tbody.innerHTML = `<tr><td colspan="7" class="empty-state">${t('common.none')}</td></tr>`; return; }
 
     sortArray(empsData, sortState);
 
@@ -158,6 +170,7 @@ export async function renderEmployees(container) {
         <tr data-id="${emp.id}">
           <td>${escapeHtml(emp.full_name)}${emp.is_external ? ` <span class="badge badge-muted">extern</span>` : ''}</td>
           <td>${escapeHtml(emp.team_name || '–')}</td>
+          <td>${escapeHtml(jobDescMap.get(emp.job_description_id) || '–')}</td>
           <td class="num mono">${Number(emp.employment_pct).toFixed(2)}</td>
           <td class="num mono">${effPct}</td>
           <td>${emp.auth_user_id
@@ -178,6 +191,7 @@ export async function renderEmployees(container) {
         document.getElementById('f-id').value = emp.id;
         document.getElementById('f-name').value = emp.full_name;
         teamSelect.value = emp.team_id || '';
+        jobDescSelect.value = emp.job_description_id || '';
         document.getElementById('f-pensum').value = emp.employment_pct;
         document.getElementById('f-focus-override').value = emp.focus_factor_override ?? '';
         document.getElementById('f-indiv-factor').value = emp.individual_factor ?? '';

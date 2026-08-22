@@ -262,7 +262,7 @@ export async function renderRoles(container) {
           if (newPassword.length < 8) { alert(t('roles.defaultPasswordHint')); return; }
 
           const emp = rolesData.find(x => x.id === employeeId);
-          const { error } = await invokeAdminUsers({ action: 'reset_password', auth_user_id: emp.auth_user_id, password: newPassword });
+          const { error } = await invokeAdminUsers({ action: 'reset_password', employee_id: employeeId, auth_user_id: emp.auth_user_id, password: newPassword });
 
           if (error) {
             alert(error);

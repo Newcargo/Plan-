@@ -4,6 +4,7 @@ import { formatDate } from '../dateFormat.js';
 
 export async function renderApprovals(container, context) {
   const roles = (context && context.roles) || new Set();
+  const currentEmployeeId = context && context.employee && context.employee.id;
   const canApprove = roles.has('stufe2_genehmiger') || roles.has('admin');
   const canForward = roles.has('people_pool_manager') || roles.has('admin');
 
@@ -47,8 +48,9 @@ export async function renderApprovals(container, context) {
           <th>${t('myLeave.period')}</th>
           <th>${t('myLeave.statusCol')}</th>
           <th>${t('myLeave.comment')}</th>
+          <th>${t('approvals.processedBy')}</th>
         </tr></thead>
-        <tbody id="history-tbody"><tr><td colspan="4" class="empty-state">${t('common.loading')}</td></tr></tbody>
+        <tbody id="history-tbody"><tr><td colspan="5" class="empty-state">${t('common.loading')}</td></tr></tbody>
       </table>
     </div>
   `;
@@ -71,13 +73,14 @@ export async function renderApprovals(container, context) {
   async function loadAll() {
     const { data, error } = await supabase
       .from('leave_requests')
-      .select('id, start_date, end_date, status, comment_stufe2, employee_id, employees!leave_requests_employee_id_fkey(full_name, is_external)')
+      .select('id, start_date, end_date, status, comment_stufe2, employee_id, employees!leave_requests_employee_id_fkey(full_name, is_external), approver:employees!leave_requests_approved_by_fkey(full_name)')
       .order('start_date', { ascending: false });
 
     if (error) {
+      const colspans = { 'pending-tbody': 3, 'forward-tbody': 3, 'history-tbody': 5 };
       ['pending-tbody', 'forward-tbody', 'history-tbody'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.innerHTML = `<tr><td colspan="4" class="empty-state">${t('common.error')}</td></tr>`;
+        if (el) el.innerHTML = `<tr><td colspan="${colspans[id]}" class="empty-state">${t('common.error')}</td></tr>`;
       });
       return;
     }
@@ -111,6 +114,7 @@ export async function renderApprovals(container, context) {
         const { error } = await supabase.from('leave_requests').update({
           status: 'genehmigt_projekt',
           comment_stufe2: comment,
+          approved_by: currentEmployeeId,
           approved_at: new Date().toISOString(),
         }).eq('id', id);
         if (error) { alert(t('common.error') + '\n' + error.message); return; }
@@ -129,6 +133,7 @@ export async function renderApprovals(container, context) {
         const { error } = await supabase.from('leave_requests').update({
           status: 'abgelehnt',
           comment_stufe2: comment.trim(),
+          approved_by: currentEmployeeId,
         }).eq('id', id);
         if (error) { alert(t('common.error') + '\n' + error.message); return; }
         loadAll();
@@ -161,7 +166,7 @@ export async function renderApprovals(container, context) {
 
   function renderHistory(rows) {
     const tbody = document.getElementById('history-tbody');
-    if (!rows.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">${t('common.none')}</td></tr>`; return; }
+    if (!rows.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">${t('common.none')}</td></tr>`; return; }
 
     tbody.innerHTML = rows.map(r => {
       const meta = STATUS_META[r.status] || { label: r.status, cls: 'badge-muted' };
@@ -171,6 +176,7 @@ export async function renderApprovals(container, context) {
           <td class="mono">${formatDate(r.start_date)} – ${formatDate(r.end_date)}</td>
           <td><span class="badge ${meta.cls}">${meta.label}</span></td>
           <td>${escapeHtml(r.comment_stufe2 || '')}</td>
+          <td>${escapeHtml(r.approver?.full_name || '–')}</td>
         </tr>
       `;
     }).join('');

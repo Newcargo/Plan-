@@ -6,9 +6,25 @@
 //
 // Bei jeder Aenderung: APP_VERSION anpassen UND einen neuen Eintrag oben in CHANGELOG ergaenzen.
 
-export const APP_VERSION = '1.11.0';
+export const APP_VERSION = '1.12.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.12.0',
+    date: '2026-08-21',
+    changes: {
+      de: [
+        'Erzwungener Passwortwechsel: Wer mit einem Admin-vergebenen Passwort (neu oder zurückgesetzt) einloggt, muss vor dem eigentlichen Login zuerst ein eigenes Passwort festlegen',
+        'Jobbezeichnungen: neue verwaltbare Liste unter Einstellungen, als Dropdown bei Mitarbeitern auswählbar',
+        'Traceability: Beim Genehmigen/Ablehnen wird jetzt korrekt gespeichert, wer entschieden hat ("Bearbeitet von") – war in der Datenbank vorbereitet, wurde aber nie befüllt. Sichtbar in Genehmigungen und in Mein Urlaub',
+      ],
+      en: [
+        'Forced password change: anyone logging in with an admin-assigned password (new or reset) must first set their own password before accessing the app',
+        'Job descriptions: new manageable list under settings, selectable as a dropdown on employees',
+        'Traceability: approving/rejecting now correctly records who made the decision ("Processed by") – the database column existed but was never populated. Visible in Approvals and My Leave',
+      ],
+    },
+  },
   {
     version: '1.11.0',
     date: '2026-08-21',

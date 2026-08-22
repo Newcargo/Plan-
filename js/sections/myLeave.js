@@ -68,9 +68,10 @@ export async function renderMyLeave(container, context) {
           <th>${t('myLeave.period')}</th>
           <th>${t('myLeave.statusCol')}</th>
           <th>${t('myLeave.comment')}</th>
+          <th>${t('approvals.processedBy')}</th>
           <th></th>
         </tr></thead>
-        <tbody id="leave-tbody"><tr><td colspan="4" class="empty-state">${t('common.loading')}</td></tr></tbody>
+        <tbody id="leave-tbody"><tr><td colspan="5" class="empty-state">${t('common.loading')}</td></tr></tbody>
       </table>
     </div>
   `;
@@ -143,18 +144,18 @@ export async function renderMyLeave(container, context) {
     const tbody = document.getElementById('leave-tbody');
     const { data, error } = await supabase
       .from('leave_requests')
-      .select('id, start_date, end_date, status, comment_stufe2')
+      .select('id, start_date, end_date, status, comment_stufe2, approver:employees!leave_requests_approved_by_fkey(full_name)')
       .eq('employee_id', employee.id)
       .order('start_date', { ascending: false });
 
-    if (error) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">${t('common.error')}</td></tr>`; return; }
+    if (error) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">${t('common.error')}</td></tr>`; return; }
     leaveData = data || [];
     renderRows();
   }
 
   function renderRows() {
     const tbody = document.getElementById('leave-tbody');
-    if (!leaveData.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty-state">${t('common.none')}</td></tr>`; return; }
+    if (!leaveData.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">${t('common.none')}</td></tr>`; return; }
 
     tbody.innerHTML = leaveData.map(lr => {
       const meta = STATUS_META[lr.status] || { label: lr.status, cls: 'badge-muted' };
@@ -187,6 +188,7 @@ export async function renderMyLeave(container, context) {
           <td class="mono">${formatDate(lr.start_date)} – ${formatDate(lr.end_date)}</td>
           <td><span class="badge ${meta.cls}">${t('myLeave.status.' + lr.status) || meta.label}</span></td>
           <td>${escapeHtml(lr.comment_stufe2 || '')}</td>
+          <td>${escapeHtml(lr.approver?.full_name || '–')}</td>
           <td class="row-actions">${actions}</td>
         </tr>
       `;

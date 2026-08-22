@@ -33,6 +33,7 @@ const routes = {
 };
 
 const loginScreen = document.getElementById('login-screen');
+const forcePasswordScreen = document.getElementById('force-password-screen');
 const appShell = document.getElementById('app-shell');
 const mainContent = document.getElementById('main-content');
 
@@ -93,9 +94,16 @@ function defaultRoute() {
 
 function showLogin(message) {
   appShell.hidden = true;
+  forcePasswordScreen.hidden = true;
   loginScreen.hidden = false;
   const errEl = document.getElementById('login-error');
   if (message) { errEl.textContent = message; errEl.hidden = false; } else { errEl.hidden = true; }
+}
+
+function showForcePassword() {
+  loginScreen.hidden = true;
+  appShell.hidden = true;
+  forcePasswordScreen.hidden = false;
 }
 
 async function showApp() {
@@ -145,6 +153,12 @@ async function handleAccessResult() {
   if (result.status === 'ok') {
     currentEmployee = result.employee;
     currentRoles = result.roles;
+
+    if (currentEmployee.must_change_password) {
+      showForcePassword();
+      return;
+    }
+
     await showApp();
     return;
   }
@@ -158,6 +172,38 @@ async function handleAccessResult() {
     showLogin();
   }
 }
+
+document.getElementById('force-password-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const errEl = document.getElementById('force-pw-error');
+  errEl.hidden = true;
+
+  const newPw = document.getElementById('force-pw-new').value;
+  const confirmPw = document.getElementById('force-pw-confirm').value;
+
+  if (newPw !== confirmPw) {
+    errEl.textContent = t('forcePw.mismatch');
+    errEl.hidden = false;
+    return;
+  }
+  if (newPw.length < 8) {
+    errEl.textContent = t('forcePw.tooShort');
+    errEl.hidden = false;
+    return;
+  }
+
+  const { error: updateErr } = await supabase.auth.updateUser({ password: newPw });
+  if (updateErr) {
+    errEl.textContent = updateErr.message;
+    errEl.hidden = false;
+    return;
+  }
+
+  await supabase.from('employees').update({ must_change_password: false }).eq('id', currentEmployee.id);
+  currentEmployee.must_change_password = false;
+  document.getElementById('force-password-form').reset();
+  await showApp();
+});
 
 // Beim Laden pruefen, ob bereits eine gueltige Session besteht
 (async function init() {
